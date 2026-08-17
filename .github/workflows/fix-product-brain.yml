@@ -1,0 +1,30 @@
+name: Fix Product Brain
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, '[skip brain-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix and run Product Brain script
+        run: |
+          sed -i 's/script_pat.subn(js, s, count=1)/script_pat.subn(lambda m: js, s, count=1)/' scripts/upgrade_product_brain.py
+          python scripts/upgrade_product_brain.py
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/upgrade_product_brain.py index.html
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Finish automatic Product Brain upgrade [skip brain-fix] [skip product-brain] [skip easy-builder]"
+            git push
+          fi
