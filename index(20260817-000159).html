@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GLAM Business Hub — Agency OS</title>
+<style>
+:root{
+  --sapphire:#168FEA;
+  --deep:#103B63;
+  --black:#171A1E;
+  --white:#FFFFFF;
+  --soft:#F6FAFF;
+  --silver:#DCE4EC;
+  --silver2:#AEBFCC;
+  --text:#1E2A36;
+  --muted:#66788B;
+  --line:rgba(16,59,99,.14);
+  --line2:rgba(16,59,99,.22);
+  --good:#2fb577;
+  --warn:#e79b31;
+  --pink:#F3E4F8;
+  --shadow:0 16px 42px rgba(18,46,70,.10);
+  --shadow2:0 12px 24px rgba(18,46,70,.08);
+  --hero:0 0 44px rgba(22,143,234,.24);
+  --radius:24px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(22,143,234,.16), transparent 30%),
+    radial-gradient(circle at 100% 0%, rgba(174,191,204,.22), transparent 22%),
+    linear-gradient(180deg,#fbfdff 0%, #eef4fb 100%);
+  min-height:100vh;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.65;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(255,255,255,.86) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 10%, rgba(255,255,255,.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 55% 55%, rgba(22,143,234,.14) 0 1px, transparent 3px),
+    radial-gradient(circle at 70% 75%, rgba(255,255,255,.6) 0 1px, transparent 2px);
+  background-size:420px 320px, 380px 300px, 260px 260px, 240px 240px;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+img{max-width:100%; display:block}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh;position:relative;z-index:1}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow:auto;
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(245,250,255,.96));
+  border-right:1px solid var(--line);
+  box-shadow:14px 0 36px rgba(18,46,70,.06);
+  padding:20px 18px 24px;
+}
+.brand-shell{
+  position:relative; overflow:hidden; border-radius:28px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(241,247,255,.98));
+  box-shadow:var(--shadow);
+  padding:12px 12px 16px;
+}
+.brand-shell::before,.brand-shell::after{content:"";position:absolute;border-radius:50%;pointer-events:none;filter:blur(18px);opacity:.42}
+.brand-shell::before{width:120px;height:120px;background:rgba(22,143,234,.18);left:-35px;top:-35px}
+.brand-shell::after{width:130px;height:130px;background:rgba(255,255,255,.9);right:-28px;top:4px}
+.logo-box{padding:6px 0 10px; position:relative; z-index:1}
+.logo-box img{width:100%; border-radius:18px; filter:drop-shadow(0 10px 22px rgba(16,59,99,.14))}
+.brand-title{font-size:12px; font-weight:900; letter-spacing:2px; color:var(--sapphire); text-align:center; margin-top:8px}
+.brand-name{margin:4px 0 0;text-align:center;font-size:26px;font-weight:900;letter-spacing:.5px;color:var(--deep)}
+.brand-tag{margin:10px auto 0;max-width:220px;text-align:center;font-size:12px;line-height:1.5;color:var(--muted);font-weight:700}
+.nav{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.nav button{
+  display:flex; align-items:center; gap:12px; width:100%;
+  border:0; text-align:left; border-radius:16px;
+  padding:13px 14px;
+  background:rgba(255,255,255,.74); color:#3d556f;
+  font-weight:800; box-shadow:inset 0 0 0 1px rgba(16,59,99,.08);
+}
+.nav button span{font-size:12px;color:#8297ab;font-weight:900;margin-left:auto}
+.nav button.active,.nav button:hover{background:linear-gradient(90deg,rgba(22,143,234,.16),rgba(255,255,255,.96));color:var(--deep);box-shadow:inset 4px 0 0 var(--sapphire),0 10px 18px rgba(18,46,70,.07)}
+.sidebar-card{
+  margin-top:18px; padding:15px; border:1px solid var(--line); border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.86),rgba(245,250,255,.96)); box-shadow:var(--shadow2);
+}
+.sidebar-card b{display:block;color:var(--deep);margin-bottom:6px;font-size:12px}
+.sidebar-card p{margin:0;font-size:12px;line-height:1.55;color:var(--muted)}
+.main{padding:26px 30px 50px; overflow:hidden}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.topbar h2{margin:0;color:var(--deep);font-size:34px;line-height:1.05;font-weight:900;letter-spacing:.3px}
+.topbar p{margin:8px 0 0;color:#677b90;font-size:14px;max-width:740px;line-height:1.55}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  border:1px solid rgba(16,59,99,.12); border-radius:15px; padding:11px 16px;
+  background:linear-gradient(180deg,#ffffff,#f2f7fd); color:var(--deep); font-weight:900;
+  box-shadow:var(--shadow2);
+}
+.btn.primary{background:linear-gradient(135deg,var(--sapphire),#4cb4ff);color:#fff;border-color:transparent;box-shadow:var(--hero)}
+.btn.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
+.section{display:none;animation:fade .18s ease}.section.active{display:block}
+@keyframes fade{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{
+  position:relative; overflow:hidden; border:1px solid rgba(16,59,99,.10); border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(244,249,255,.98));
+  box-shadow:var(--shadow); padding:18px;
+}
+.card::before{content:"";position:absolute;left:-40px;bottom:-45px;width:120px;height:120px;border-radius:50%;background:rgba(22,143,234,.08);filter:blur(8px);pointer-events:none}
+.card h3{margin:0 0 6px;color:var(--deep);font-size:18px}
+.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.grid{display:grid;gap:16px}.grid.cols4{grid-template-columns:repeat(4,1fr)}.grid.cols3{grid-template-columns:repeat(3,1fr)}.grid.cols2{grid-template-columns:repeat(2,1fr)}
+.hero{display:grid;grid-template-columns:1.18fr .92fr;gap:16px;margin-bottom:16px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(90deg,rgba(22,143,234,.16),rgba(255,255,255,.92));border:1px solid rgba(22,143,234,.20);color:var(--deep);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.hero-title{margin:0 0 12px;color:var(--deep);font-size:40px;line-height:1.05;font-weight:900;max-width:730px}
+.hero-title em{font-style:normal;color:var(--sapphire);text-shadow:0 0 16px rgba(22,143,234,.18)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.badge{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(16,59,99,.10);box-shadow:var(--shadow2);font-size:10px;font-weight:900;color:#617486}
+.workflow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:18px}
+.step{padding:14px 10px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(244,248,255,.98));border:1px solid rgba(16,59,99,.10);box-shadow:var(--shadow2);text-align:center;color:#738698;font-size:11px;line-height:1.45}
+.step b{display:block;color:var(--deep);font-size:12px;margin-bottom:4px}
+.metric strong{display:block;margin-top:8px;color:var(--deep);font-size:34px;font-weight:900}
+.metric .label{color:#72869a;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:900}
+.metric .accent{color:var(--sapphire);font-weight:800;font-size:13px}
+.preview-frame{border-radius:24px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);padding:10px}
+.preview-frame img{border-radius:18px}
+.section-title{display:flex;align-items:end;justify-content:space-between;margin:22px 0 12px;gap:12px}
+.section-title h3{margin:0;color:var(--deep);font-size:24px;font-weight:900}
+.section-title span{color:#728598;font-size:12px}
+.quick-card{padding:18px}.quick-card b{display:block;color:var(--deep);font-size:14px;margin-bottom:6px}.quick-card span{display:block;color:#6d8094;font-size:12px;line-height:1.5}.quick-card button{margin-top:14px;border:0;background:transparent;color:#0077d8;font-weight:900;padding:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.form-grid.thirds{grid-template-columns:repeat(3,1fr)}
+.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#6c7d90;text-transform:uppercase;letter-spacing:.85px;font-weight:900}
+.field input,.field textarea,.field select{
+  border:1px solid rgba(16,59,99,.12);border-radius:15px;padding:12px 13px;outline:none;
+  background:linear-gradient(180deg,#ffffff,#f7fbff);color:var(--text);box-shadow:inset 0 1px 2px rgba(16,59,99,.03)
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(22,143,234,.5);box-shadow:0 0 0 4px rgba(22,143,234,.08)}
+.field textarea{min-height:96px;resize:vertical}
+.tagbox{display:flex;gap:8px;flex-wrap:wrap}.tag{padding:8px 10px;border-radius:999px;border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f6faff);box-shadow:var(--shadow2);font-size:11px;font-weight:800;color:#5f7386}.tag.on{background:linear-gradient(180deg,rgba(22,143,234,.16),rgba(255,255,255,.98));color:var(--deep);border-color:rgba(22,143,234,.22)}
+.swatches{display:flex;gap:14px;flex-wrap:wrap}.swatch{width:90px;text-align:center}.color{height:58px;border-radius:50%;border:6px solid rgba(255,255,255,.94);box-shadow:0 8px 18px rgba(18,46,70,.09), inset 0 0 0 1px rgba(16,59,99,.10);margin-bottom:8px}.swatch small{display:block;font-size:10px;line-height:1.35;color:#607386}
+.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.rule{padding:16px;border-radius:18px;border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(246,250,255,.98));box-shadow:var(--shadow2)}.rule.good{border-left:4px solid var(--good)}.rule.bad{border-left:4px solid #d66e7b}.rule b{display:block;color:var(--deep);font-size:12px;margin-bottom:6px}.rule p{font-size:12px}
+.meaning-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.meaning{padding:16px;border-radius:18px;background:linear-gradient(180deg,#fff,#f4f9ff);border:1px solid rgba(16,59,99,.10);box-shadow:var(--shadow2);text-align:center}.meaning strong{display:block;color:var(--sapphire);font-size:22px;margin-bottom:8px}.meaning span{display:block;color:var(--deep);font-weight:900;margin-bottom:6px}.meaning p{margin:0;color:#6d7f92;font-size:12px;line-height:1.5}
+.split{display:grid;grid-template-columns:1fr .92fr;gap:16px}
+.product-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.product{position:relative}.status{position:absolute;right:14px;top:14px;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;background:rgba(22,143,234,.12);border:1px solid rgba(22,143,234,.25);color:var(--deep)}.product h4{margin:18px 0 6px;color:var(--deep)}.product .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.product .meta span{font-size:10px;padding:6px 8px;border-radius:999px;border:1px solid rgba(16,59,99,.10);background:rgba(255,255,255,.7);color:#617689}.product footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px}.product footer small{color:#8092a5}.mini-actions{display:flex;gap:10px;flex-wrap:wrap}.text-link{border:0;background:transparent;color:#0077d8;font-weight:900;padding:0}
+.check-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}.check-item{padding:14px;border-radius:18px;border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f7fbff);box-shadow:var(--shadow2)}.check-item strong{display:block;color:var(--deep);font-size:13px;margin-bottom:8px}.progressbar{height:8px;border-radius:999px;background:rgba(16,59,99,.08);overflow:hidden;margin:8px 0}.progressbar span{display:block;height:100%;background:linear-gradient(90deg,var(--sapphire),#7ccaff)}.check-item small{display:block;color:#6f8295;font-size:11px;line-height:1.45}
+.asset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.asset{padding:15px;border:1px solid rgba(16,59,99,.10);border-radius:18px;background:linear-gradient(180deg,#fff,#f5faff);box-shadow:var(--shadow2)}.asset input{accent-color:var(--sapphire)}.asset b{display:block;color:var(--deep);margin:8px 0 4px;font-size:13px}.asset span{display:block;font-size:11px;color:#6e8194;line-height:1.45}.asset small{display:block;margin-top:8px;color:#0077d8;font-weight:900}
+.output{white-space:pre-wrap;background:linear-gradient(180deg,#fff,#f5faff);border:1px solid rgba(16,59,99,.11);border-radius:18px;padding:16px;color:#223241;line-height:1.58;font-size:13px;min-height:180px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.empty{padding:28px;text-align:center;border:1px dashed rgba(16,59,99,.16);border-radius:18px;color:#738698;background:rgba(255,255,255,.55)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button{border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f7fbff);color:#5e7387;padding:10px 12px;border-radius:999px;font-weight:900;box-shadow:var(--shadow2)}.tabs button.active{background:linear-gradient(180deg,rgba(22,143,234,.16),rgba(255,255,255,.98));color:var(--deep);border-color:rgba(22,143,234,.22)}
+.dual-output{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.list{margin:0;padding-left:18px;color:#596e82}.list li{margin:4px 0}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kv .card{padding:16px}
+.hidden{display:none !important}
+.toast{position:fixed;right:22px;bottom:22px;background:linear-gradient(180deg,#fff,#eef6ff);border:1px solid rgba(22,143,234,.24);padding:12px 15px;border-radius:14px;box-shadow:var(--hero);display:none;z-index:30;font-size:12px;font-weight:900;color:var(--deep)}
+.upload-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.import-input{display:none}
+.vault-group{display:grid;gap:12px}
+.vault-item{padding:15px;border:1px solid rgba(16,59,99,.10);border-radius:18px;background:linear-gradient(180deg,#fff,#f7fbff);box-shadow:var(--shadow2)}
+.vault-item header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}.vault-item header b{color:var(--deep);font-size:13px}.vault-meta{font-size:10px;color:#718598;font-weight:900;text-transform:uppercase;letter-spacing:.7px}
+.vault-item pre{margin:0;white-space:pre-wrap;max-height:160px;overflow:auto;font-family:inherit;font-size:12px;line-height:1.5;color:#304457}
+@media(max-width:1200px){.hero,.split,.dual-output,.grid.cols4,.grid.cols3,.grid.cols2,.check-grid,.kv{grid-template-columns:1fr 1fr}.product-list,.meaning-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.nav{display:grid;grid-template-columns:repeat(2,1fr)}.main{padding:18px}.hero,.split,.dual-output,.grid.cols4,.grid.cols3,.grid.cols2,.form-grid,.form-grid.thirds,.asset-grid,.rule-grid,.check-grid,.meaning-grid,.kv,.product-list{grid-template-columns:1fr}.sidebar-card{display:none}}
+@media(max-width:620px){.nav,.workflow{grid-template-columns:1fr}.topbar{flex-direction:column}.hero-title{font-size:31px}.topbar h2{font-size:30px}}
+
+.merged-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 220px 190px;gap:10px;margin:14px 0}
+.merged-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.merged-card{position:relative}.merged-card h4{margin:18px 0 6px;color:var(--deep)}.merged-card .mini-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}.merged-link{border:0;background:transparent;color:#0075d6;font-weight:900;padding:0}.merged-star{position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:20px;color:#90a3b5}.merged-star.on{color:#edae27}.merged-status{position:absolute;right:46px;top:14px;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;background:rgba(22,143,234,.12);color:var(--deep);border:1px solid rgba(22,143,234,.22)}
+.merged-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.merged-tabs button{border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f7fbff);color:#5e7387;padding:9px 11px;border-radius:999px;font-weight:900}.merged-tabs button.active{background:linear-gradient(180deg,rgba(22,143,234,.16),rgba(255,255,255,.98));color:var(--deep);border-color:rgba(22,143,234,.22)}
+.merged-pane{display:none}.merged-pane.active{display:block}.merged-modal{position:fixed;inset:0;background:rgba(17,37,56,.48);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}.merged-modal.hidden{display:none}.merged-modal-card{width:min(720px,96vw);max-height:90vh;overflow:auto;background:#fff;border:1px solid rgba(16,59,99,.12);border-radius:24px;padding:18px;box-shadow:0 24px 60px rgba(18,46,70,.25)}.merged-modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.merged-modal-head h3{margin:0;color:var(--deep)}
+.idea-messages{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;margin:14px 0}.idea-msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:13px;line-height:1.55}.idea-msg.user{align-self:flex-end;background:rgba(22,143,234,.14);border:1px solid rgba(22,143,234,.2)}.idea-msg.assistant{align-self:flex-start;background:#fff;border:1px solid rgba(16,59,99,.10)}
+.collection-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.collection-item{padding:14px;border-radius:18px;border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f6faff)}.collection-item h4{margin:0 0 7px;color:var(--deep)}.collection-item pre{white-space:pre-wrap;font-family:inherit;font-size:12px;line-height:1.5;max-height:150px;overflow:auto;color:#31485b}
+@media(max-width:980px){.merged-grid,.collection-grid,.merged-toolbar{grid-template-columns:1fr}}
+
+.auth-hidden{display:none!important}.auth-page{min-height:100vh;display:grid;place-items:center;padding:28px;position:relative;z-index:5;background:radial-gradient(circle at 12% 10%,rgba(22,143,234,.16),transparent 30%),linear-gradient(180deg,#fbfdff,#eef5fc)}
+.auth-card-wrap{width:min(980px,96vw);display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:stretch}.auth-showcase,.auth-panel{border:1px solid rgba(16,59,99,.12);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(245,250,255,.98));box-shadow:0 24px 60px rgba(18,46,70,.13);padding:28px}.auth-showcase{display:flex;flex-direction:column;justify-content:space-between;min-height:520px;overflow:hidden;position:relative}.auth-showcase:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-120px;bottom:-120px;background:rgba(22,143,234,.13);filter:blur(10px)}.auth-kicker{font-size:11px;letter-spacing:1.7px;text-transform:uppercase;color:var(--sapphire);font-weight:900}.auth-showcase h1{font-size:44px;line-height:1.02;color:var(--deep);margin:14px 0}.auth-showcase p{color:var(--muted);line-height:1.65;max-width:520px}.auth-points{display:grid;gap:10px;margin-top:20px}.auth-point{padding:12px 14px;border:1px solid rgba(16,59,99,.10);border-radius:16px;background:#fff;color:#536b80;font-weight:800;font-size:12px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}.auth-tab{padding:11px;border-radius:14px;border:1px solid rgba(16,59,99,.10);background:#f7fbff;color:#607487;font-weight:900}.auth-tab.active{background:linear-gradient(135deg,var(--sapphire),#4cb4ff);color:#fff;border-color:transparent}.password-field{position:relative}.password-field input{padding-right:88px!important}.password-toggle{position:absolute;right:10px;bottom:9px;border:0;background:transparent;color:#0077d8;font-size:11px;font-weight:900}.auth-note{margin-top:14px;font-size:11px;color:#778b9e;line-height:1.5}.auth-links{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:12px 0}.linkish{border:0;background:transparent;color:#0077d8;padding:0;font-weight:900;font-size:12px}.account-chip{display:inline-flex;gap:9px;align-items:center;padding:9px 11px;border:1px solid rgba(16,59,99,.10);border-radius:14px;background:#fff;color:#50677b;font-size:11px;font-weight:900}.brand-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.brand-asset-preview{min-height:180px;border:1px dashed rgba(16,59,99,.18);border-radius:18px;background:#fff;display:grid;place-items:center;overflow:hidden;padding:10px}.brand-asset-preview img{max-height:260px;object-fit:contain}.account-status{padding:12px 14px;border-radius:16px;border:1px solid rgba(16,59,99,.10);background:linear-gradient(180deg,#fff,#f7fbff);color:#5f7387;font-size:12px;line-height:1.55}.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2fb577;margin-right:6px}.sync-dot.off{background:#d38b33}.recovery-panel{margin-top:14px;padding:14px;border-radius:16px;border:1px solid rgba(22,143,234,.18);background:rgba(22,143,234,.06)}
+@media(max-width:820px){.auth-card-wrap,.brand-upload-grid{grid-template-columns:1fr}.auth-showcase{min-height:auto}.auth-showcase h1{font-size:34px}}
+
+</style>
+</head>
+<body>
+
+<section id="authView" class="auth-page">
+  <div class="auth-card-wrap">
+    <div class="auth-showcase">
+      <div>
+        <div class="auth-kicker">PRIVATE MULTI-USER WORKSPACE</div>
+        <h1>Your business. Your brand. Your private workspace.</h1>
+        <p>Create products, save generator folders and links, build visuals, manage campaigns, and keep everything separated by account.</p>
+        <div class="auth-points">
+          <div class="auth-point">Every user gets a separate brand kit and workspace.</div>
+          <div class="auth-point">Products, prompts, campaigns, generators, and vault items stay private.</div>
+          <div class="auth-point">Generator folder storage is scoped to the signed-in user on that browser.</div>
+        </div>
+      </div>
+      <div class="auth-note">The app shell is neutral. Your personal brand only appears after you sign in to your own account.</div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-tabs"><button id="loginTab" class="auth-tab active" type="button">Log In</button><button id="signupTab" class="auth-tab" type="button">Create Account</button></div>
+      <form id="authForm">
+        <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+        <div class="field password-field" style="margin-top:12px"><label>Password</label><input id="authPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="Enter your password"><button class="password-toggle" type="button" data-toggle-password="authPassword">Show</button></div>
+        <label style="display:flex;align-items:center;gap:8px;margin:12px 0;color:#607487;font-size:12px;font-weight:800"><input id="rememberMe" type="checkbox" checked> Keep me signed in</label>
+        <button id="authSubmit" class="btn primary" style="width:100%" type="submit">Log In</button>
+      </form>
+      <div class="auth-links"><button id="forgotPasswordBtn" class="linkish" type="button">Forgot password?</button><span id="authStatus" style="font-size:11px;color:#778b9e"></span></div>
+      <div id="recoveryBox" class="recovery-panel hidden">
+        <div class="field password-field"><label>New Password</label><input id="newPassword" type="password" minlength="8" placeholder="At least 8 characters"><button class="password-toggle" type="button" data-toggle-password="newPassword">Show</button></div>
+        <div class="field password-field" style="margin-top:10px"><label>Confirm New Password</label><input id="confirmNewPassword" type="password" minlength="8" placeholder="Enter it again"><button class="password-toggle" type="button" data-toggle-password="confirmNewPassword">Show</button></div>
+        <button id="saveNewPasswordBtn" class="btn primary" style="width:100%;margin-top:12px" type="button">Save New Password</button>
+      </div>
+      <div class="auth-note">Email verification and password-reset links work best when this page is hosted on HTTPS.</div>
+    </div>
+  </div>
+</section>
+
+<div id="appView" class="app auth-hidden">
+  <aside class="sidebar">
+    <div class="brand-shell" id="workspaceBrandShell">
+      <div class="brand-title">BUSINESS & CREATIVE COMMAND HUB</div>
+      <div class="brand-name" id="workspaceBrandName">MY BUSINESS HUB</div>
+      <div class="brand-tag" id="workspaceBrandTag">Your private products, generators, creative assets, and marketing workspace.</div>
+    </div>
+    <nav class="nav">
+      <button class="active" data-section="dashboard">Dashboard <span>01</span></button>
+      <button data-section="brand">Brand Intelligence <span>02</span></button>
+      <button data-section="products">Product Library <span>03</span></button>
+      <button data-section="builder">Product Builder <span>04</span></button>
+      <button data-section="launch">Launch Lab <span>05</span></button>
+      <button data-section="visuals">Visual Studio <span>06</span></button>
+      <button data-section="platforms">Platform Studio <span>07</span></button>
+      <button data-section="vault">Creative Vault <span>08</span></button>
+
+      <button data-section="generators">Generator Vault <small>09</small></button>
+      <button data-section="ideaBrain">Idea Brain <small>10</small></button>
+      <button data-section="workspaceStudio">Workspace Studio <small>11</small></button>
+      <button data-section="account">Account & Workspace <small>12</small></button>
+    </nav>
+    <div class="sidebar-card">
+      <b>What this version does better</b>
+      <p>It stores deeper product data, recommends real launch packages, generates platform-specific content, creates thumbnail and mockup prompts, saves outputs to a vault, and includes import/export backup.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">Executive Dashboard</h2>
+        <p id="pageSub">Your bright glam business operating system for products, visuals, platforms, launches, and reusable saved creative.</p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" data-goto="builder">+ New Product</button>
+        <button class="btn soft" id="exportBtn">Export Backup</button>
+        <button class="btn soft" id="importBtn">Import Backup</button><span class="account-chip"><span class="sync-dot" id="syncDot"></span><span id="topbarUserEmail">Signed in</span></span><button class="btn soft" data-goto="account">Account</button><button class="btn soft" id="logoutTopBtn">Log Out</button>
+        <input type="file" class="import-input" id="importFile" accept="application/json" />
+      </div>
+    </header>
+
+    <section id="dashboard" class="section active">
+      <div class="hero">
+        <div class="card">
+          <div class="pill">Agency Mode • Product-to-Promotion Workflow</div>
+          <h1 class="hero-title">Build the product once. <em>Run the whole launch</em> from one bright, blinged-out command center.</h1>
+          <p>This version goes deeper. It behaves more like a small marketing agency operating system than a basic generator. It stores the brand, stores the product, recommends the asset stack, creates thumbnail prompts, generates platform copy, saves the outputs, and helps you launch without starting over every damn time.</p>
+          <div class="badges">
+            <span class="badge">Payhip</span><span class="badge">Website</span><span class="badge">Pinterest</span><span class="badge">TikTok</span><span class="badge">YouTube</span><span class="badge">Snapchat</span><span class="badge">Lemon8</span><span class="badge">Facebook</span><span class="badge">Email</span>
+          </div>
+          <div class="workflow">
+            <div class="step"><b>1. Brand</b>Save your rules once.</div>
+            <div class="step"><b>2. Product</b>Capture the real offer.</div>
+            <div class="step"><b>3. Launch</b>See what you actually need.</div>
+            <div class="step"><b>4. Visuals</b>Generate prompts and briefs.</div>
+            <div class="step"><b>5. Platforms</b>Create store + promo content.</div>
+            <div class="step"><b>6. Vault</b>Save what works and reuse it.</div>
+          </div>
+        </div>
+        <div class="preview-frame" id="dashboardBrandPreview"><div class="empty">Your private brand kit will appear here after you add it.</div></div>
+      </div>
+
+      <div class="grid cols4">
+        <div class="card metric"><div class="label">Saved products</div><strong id="metricProducts">0</strong><div class="accent">Permanent product library</div></div>
+        <div class="card metric"><div class="label">Vault items</div><strong id="metricVault">0</strong><div class="accent">Saved prompts + copy + campaigns</div></div>
+        <div class="card metric"><div class="label">Active channels</div><strong>9</strong><div class="accent">Store + platform ecosystem</div></div>
+        <div class="card metric"><div class="label">Creative direction</div><strong>GLAM</strong><div class="accent">Bright • Bling • Butterflies</div></div>
+      </div>
+
+      <div class="section-title"><h3>Needs Attention</h3><span>Real dashboard guidance, not fake analytics</span></div>
+      <div id="needsAttention" class="grid cols3"></div>
+
+      <div class="section-title"><h3>Quick Create</h3><span>Jump straight to what you need</span></div>
+      <div class="grid cols3">
+        <div class="card quick-card"><b>Create my whole launch</b><span>Choose one saved product and build a launch package with visuals, store content, social content, and CTA direction.</span><button data-goto="launch">Open Launch Lab →</button></div>
+        <div class="card quick-card"><b>Generate thumbnail prompts</b><span>Create the same branded thumbnail output every time with your bright sapphire, silver, bling, and butterfly styling.</span><button data-goto="visuals">Open Visual Studio →</button></div>
+        <div class="card quick-card"><b>Repurpose for platforms</b><span>Turn one product into Payhip, TikTok, YouTube, Snapchat, Lemon8, Pinterest, and email content.</span><button data-goto="platforms">Open Platform Studio →</button></div>
+      </div>
+
+      <div class="section-title"><h3>Recently Saved Products</h3><span>Continue where you left off</span></div>
+      <div id="dashboardProducts" class="empty">No products yet. Create one product record and your dashboard will start doing real work.</div>
+    </section>
+
+    <section id="brand" class="section">
+      <div class="section-title"><h3>Brand Intelligence</h3><span>Your actual bright brand system, embedded in the hub</span></div>
+      <div class="split">
+        <div class="card">
+          <h3>Core Brand Identity</h3>
+          <div class="brand-upload-grid" style="margin-top:14px;margin-bottom:16px">
+            <div><div class="field"><label>Private Logo Upload</label><input id="brandLogoUpload" type="file" accept="image/*"></div><div id="brandLogoPreview" class="brand-asset-preview" style="margin-top:10px"><span class="subtle-note">Your logo will appear here.</span></div></div>
+            <div><div class="field"><label>Private Brand Kit Upload</label><input id="brandKitUpload" type="file" accept="image/*"></div><div id="brandKitMiniPreview" class="brand-asset-preview" style="margin-top:10px"><span class="subtle-note">Your brand kit will appear here.</span></div></div>
+          </div>
+
+          <div class="form-grid" style="margin-top:16px">
+            <div class="field"><label>Primary Brand</label><input id="brandName" value="Glam Hustle Hub"></div>
+            <div class="field"><label>Brand Persona / Handle</label><input id="brandPersona" value="GlamorousGrammyGlowUp"></div>
+            <div class="field full"><label>Catchphrase</label><input id="brandCatchphrase" value="We don’t just look GLAM. We live GLAM."></div>
+            <div class="field"><label>Headline Font Style</label><input id="brandHeadlineFont" value="Anton / Playfair-style drama"></div>
+            <div class="field"><label>Body Font Style</label><input id="brandBodyFont" value="Lato / Montserrat"></div><div class="field"><label>Primary Brand Color</label><input id="brandPrimaryColor" type="color" value="#168FEA"></div><div class="field"><label>Secondary Brand Color</label><input id="brandSecondaryColor" type="color" value="#103B63"></div>
+            <div class="field full"><label>Brand Voice</label><textarea id="brandVoice">Luxury, bold, feminine, editorial, polished, bright, beginner-friendly, direct, confident, practical, motivating, and visually extra without becoming cluttered.</textarea></div>
+            <div class="field full"><label>Preferred Visual Language</label><textarea id="brandStyle">Bright shimmering white backgrounds, Caribbean sapphire hero color, metallic silver details, realistic blue butterflies, polished glam materials, controlled sparkle, decorative flourishes, strong typography, bold hierarchy, overly decorated but not cluttered.</textarea></div>
+          </div>
+        </div>
+        <div class="preview-frame" id="brandKitPreview"><div class="empty">Upload your brand kit or brand board for this account.</div></div>
+      </div>
+
+      <div class="section-title"><h3>GLAM Meaning</h3><span>Built into the brand story</span></div>
+      <div class="meaning-grid">
+        <div class="meaning"><strong>G</strong><span>Grace</span><p>Move with confidence, kindness, and strength while figuring things out.</p></div>
+        <div class="meaning"><strong>L</strong><span>Leadership</span><p>Take ownership of your vision and lead your own path.</p></div>
+        <div class="meaning"><strong>A</strong><span>Ambition</span><p>Give yourself permission to want more and keep pushing for it.</p></div>
+        <div class="meaning"><strong>M</strong><span>Momentum</span><p>Keep moving forward. Small steps still count.</p></div>
+      </div>
+
+      <div class="section-title"><h3>Official Palette</h3><span>Bright first. Depth second.</span></div>
+      <div class="card"><div class="swatches">
+        <div class="swatch"><div class="color" style="background:#168FEA"></div><small>Caribbean Sapphire<br>#168FEA</small></div>
+        <div class="swatch"><div class="color" style="background:#103B63"></div><small>Deep Sapphire<br>#103B63</small></div>
+        <div class="swatch"><div class="color" style="background:linear-gradient(145deg,#f7fbff,#b7c4d1,#ffffff,#a7b7c6)"></div><small>Shimmering<br>Metallic Silver</small></div>
+        <div class="swatch"><div class="color" style="background:#F8FBFF"></div><small>Shimmering White<br>#F8FBFF</small></div>
+        <div class="swatch"><div class="color" style="background:#171A1E"></div><small>Sleek Black<br>#171A1E</small></div>
+      </div></div>
+
+      <div class="section-title"><h3>Creative Guardrails</h3><span>Saved once and reused everywhere</span></div>
+      <div class="rule-grid">
+        <div class="rule good"><b>USE</b><p>Bright white or light silver backgrounds, strong sapphire focal color, metallic shine, realistic blue butterflies, bling, decorative detail, controlled sparkle, polished materials, strong typography, editorial composition, premium mockups, and clear readability.</p></div>
+        <div class="rule bad"><b>AVOID</b><p>Crowns, tiaras, queen-themed accessories, HUD overlays, dashboards, analytics panels, random charts, paint brush strokes, clutter, excessive fake icons, or a dark heavy look.</p></div>
+      </div>
+
+      <div class="section-title"><h3>Business Defaults</h3><span>What the hub should automatically remember</span></div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field"><label>Primary Website</label><input id="brandWebsite" value="glamhustlehub.com"></div>
+          <div class="field"><label>Primary Store</label><input id="brandStore" value="Payhip"></div>
+          <div class="field full"><label>Primary Audience</label><textarea id="brandAudience">Beginners, especially women 40 and older, who want practical help using technology, AI tools, digital products, workshops, websites, content creation, and business resources without feeling overwhelmed.</textarea></div>
+          <div class="field full"><label>Main Platforms</label><div class="tagbox"><span class="tag on">Payhip</span><span class="tag on">Website</span><span class="tag on">Pinterest</span><span class="tag on">TikTok</span><span class="tag on">YouTube</span><span class="tag on">Snapchat</span><span class="tag on">Lemon8</span><span class="tag on">Facebook</span><span class="tag">Instagram optional</span><span class="tag on">Email</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="section">
+      <div class="section-title"><h3>Product Library</h3><span>Every product becomes a reusable business record</span></div>
+      <div id="productList" class="product-list"></div>
+      <div id="productEmpty" class="empty">Your product library is empty. Build a product once and let the rest of the hub reuse it.</div>
+    </section>
+
+    <section id="builder" class="section">
+      <div class="card">
+        <div class="pill">Deep Product Intelligence</div>
+        <h3>Product Builder</h3>
+        <p>This form captures the foundation you actually need for product creation, listing, visuals, and marketing. You can come back and edit it anytime.</p>
+        <input type="hidden" id="productId" />
+        <div class="section-title"><h3>Product Basics</h3><span>Identity and pricing</span></div>
+        <div class="form-grid thirds">
+          <div class="field"><label>Product Name</label><input id="productName" placeholder="Example: The Type Vault"></div>
+          <div class="field"><label>Internal Project Name</label><input id="productInternalName" placeholder="Optional internal name"></div>
+          <div class="field"><label>Product Category</label><select id="productCategory"><option>Prompt Pack</option><option>Digital Guide / Ebook</option><option>Workshop / Class</option><option>Generator / Tool</option><option>Template Pack</option><option>Printable</option><option>Membership / Community</option><option>Bundle</option><option>Other Digital Product</option></select></div>
+          <div class="field"><label>Product Format</label><input id="productFormat" placeholder="PDF, prompt app, workshop, bundle..."></div>
+          <div class="field"><label>Current Price</label><input id="productPrice" placeholder="$17"></div>
+          <div class="field"><label>Regular Price</label><input id="productRegularPrice" placeholder="$27"></div>
+          <div class="field"><label>Sale Price</label><input id="productSalePrice" placeholder="$17"></div>
+          <div class="field"><label>Status</label><select id="productStatus"><option>Planning</option><option>Draft</option><option>Ready</option><option>Live</option><option>Evergreen</option></select></div>
+          <div class="field"><label>Launch Date</label><input id="productLaunchDate" type="date"></div>
+        </div>
+
+        <div class="section-title"><h3>The Offer</h3><span>What it is and why people care</span></div>
+        <div class="form-grid">
+          <div class="field full"><label>What It Is</label><textarea id="productSummary"></textarea></div>
+          <div class="field full"><label>What Problem It Solves</label><textarea id="productProblem"></textarea></div>
+          <div class="field full"><label>Main Transformation</label><textarea id="productTransformation"></textarea></div>
+          <div class="field"><label>Primary Benefit</label><input id="productPrimaryBenefit"></div>
+          <div class="field"><label>Secondary Benefits</label><input id="productSecondaryBenefits" placeholder="Separate with commas"></div>
+          <div class="field full"><label>What's Included</label><textarea id="productIncludes"></textarea></div>
+          <div class="field full"><label>Bonus Items</label><textarea id="productBonuses"></textarea></div>
+          <div class="field"><label>Commercial Use / Rights</label><input id="productRights" placeholder="Commercial use, personal use, etc."></div>
+          <div class="field"><label>Delivery Method</label><input id="productDelivery" placeholder="Instant PDF, app access, Zoom class..."></div>
+        </div>
+
+        <div class="section-title"><h3>Customer Insight</h3><span>Who it’s for and what they need</span></div>
+        <div class="form-grid">
+          <div class="field"><label>Target Audience</label><input id="productAudience"></div>
+          <div class="field"><label>Skill Level</label><input id="productSkill" placeholder="Beginner, intermediate..."></div>
+          <div class="field full"><label>Pain Points</label><textarea id="productPainPoints"></textarea></div>
+          <div class="field full"><label>Desired Result</label><textarea id="productDesiredResult"></textarea></div>
+          <div class="field full"><label>Reasons They’ll Buy</label><textarea id="productBuyReasons"></textarea></div>
+          <div class="field full"><label>Possible Hesitations</label><textarea id="productHesitations"></textarea></div>
+        </div>
+
+        <div class="section-title"><h3>Selling & Links</h3><span>Where it lives and how it should sell</span></div>
+        <div class="form-grid">
+          <div class="field"><label>Payhip URL</label><input id="productPayhipUrl"></div>
+          <div class="field"><label>Website URL</label><input id="productWebsiteUrl"></div>
+          <div class="field"><label>Primary CTA</label><input id="productCTA" placeholder="Grab it now, see what’s inside..."></div>
+          <div class="field"><label>Primary Sales Angle</label><input id="productPrimaryAngle"></div>
+          <div class="field full"><label>Secondary Sales Angles</label><textarea id="productSecondaryAngles"></textarea></div>
+          <div class="field full"><label>Keywords / Hashtags</label><textarea id="productKeywords"></textarea></div>
+          <div class="field full"><label>SEO Terms</label><textarea id="productSEO"></textarea></div>
+        </div>
+
+        <div class="actions" style="margin-top:16px">
+          <button class="btn primary" id="saveProductBtn">Save Product</button>
+          <button class="btn soft" id="clearProductBtn">Clear Form</button>
+          <button class="btn soft" id="createWholeLaunchFromBuilder">Create Whole Launch</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="launch" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Product Manager Mode</h3>
+          <p>Choose a product and let the hub tell you what needs to happen next.</p>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Product</label><select id="launchProduct"></select></div>
+            <div class="field"><label>Campaign Type</label><select id="campaignType"><option>New Product Launch</option><option>Evergreen Promotion</option><option>Flash Sale</option><option>Holiday Campaign</option><option>Bundle Promotion</option><option>Workshop Push</option><option>Relaunch / Refresh</option><option>Last Chance Push</option></select></div>
+            <div class="field full"><label>Campaign Goal</label><input id="campaignGoal" placeholder="Example: drive Payhip sales this weekend"></div>
+          </div>
+          <div class="actions" style="margin-top:16px">
+            <button class="btn primary" id="recommendLaunchBtn">Recommend Launch Package</button>
+            <button class="btn soft" id="wholeLaunchBtn">Create My Whole Launch</button>
+            <button class="btn soft" id="campaignPlanBtn">Build Campaign Plan</button>
+            <button class="btn soft" id="saveLaunchOutputBtn">Save to Vault</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Project Status</h3>
+          <p>See what’s done and what still needs attention.</p>
+          <div id="projectStatus" class="check-grid"><div class="empty" style="grid-column:1/-1">Select a product to view status.</div></div>
+        </div>
+      </div>
+      <div class="dual-output" style="margin-top:16px">
+        <div class="card"><h3>Recommended Launch Package</h3><div id="launchOutput" class="output" style="margin-top:14px">Select a product and generate recommendations.</div></div>
+        <div class="card"><h3>Whole Launch / Campaign Output</h3><div id="launchOutput2" class="output" style="margin-top:14px">Create the whole launch or build a campaign plan.</div></div>
+      </div>
+    </section>
+
+    <section id="visuals" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Visual Studio</h3>
+          <p>Generate consistent thumbnail prompts, mockup prompts, and production briefs with your brand language already baked in.</p>
+          <div class="tabs" id="visualTabs" style="margin-top:14px">
+            <button class="active" data-visual-tab="thumb">Thumbnail Studio</button>
+            <button data-visual-tab="mockup">Mockup Studio</button>
+            <button data-visual-tab="brief">Production Brief</button>
+          </div>
+          <div class="form-grid" style="margin-top:16px">
+            <div class="field"><label>Product</label><select id="visualProduct"></select></div>
+            <div class="field"><label>Purpose</label><select id="visualPurpose"><option>Website Thumbnail</option><option>Payhip Thumbnail</option><option>Pinterest Pin</option><option>YouTube Thumbnail</option><option>TikTok Promo Graphic</option><option>Launch Flyer</option><option>What’s Inside Graphic</option><option>Feature Preview Graphic</option></select></div>
+            <div class="field"><label>Mockup Type</label><select id="mockupType"><option>Laptop Mockup</option><option>Desktop Mockup</option><option>Tablet Mockup</option><option>Phone Mockup</option><option>PDF Stack Mockup</option><option>Workbook Mockup</option><option>Ebook Mockup</option><option>Generator Screen Mockup</option><option>Course / Bundle Mockup</option></select></div>
+            <div class="field"><label>Environment</label><select id="mockupEnv"><option>Luxury Desk</option><option>Bright Editorial</option><option>Glam Studio</option><option>Office Setup</option><option>Lifestyle Setting</option><option>Product Only</option></select></div>
+          </div>
+          <div class="actions" style="margin-top:16px">
+            <button class="btn primary" id="makeVisualBtn">Generate Visual Output</button>
+            <button class="btn soft" id="saveVisualBtn">Save to Vault</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Visual Output</h3>
+          <div id="visualOutput" class="output" style="margin-top:14px">Choose a product and generate a visual output.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="platforms" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Platform Studio</h3>
+          <p>Create store-ready and platform-specific content from one saved product record.</p>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Product</label><select id="platformProduct"></select></div>
+            <div class="field"><label>Workspace</label><select id="platformType">
+              <option>Payhip Pack</option>
+              <option>Website Pack</option>
+              <option>Pinterest Pack</option>
+              <option>TikTok Pack</option>
+              <option>YouTube Pack</option>
+              <option>Snapchat Pack</option>
+              <option>Lemon8 Pack</option>
+              <option>Facebook Post</option>
+              <option>Email Announcement</option>
+              <option>CTA Bank</option>
+              <option>Repurpose One Idea</option>
+            </select></div>
+          </div>
+          <div class="actions" style="margin-top:16px">
+            <button class="btn primary" id="generatePlatformBtn">Generate Workspace Output</button>
+            <button class="btn soft" id="savePlatformBtn">Save to Vault</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Platform Output</h3>
+          <div id="platformOutput" class="output" style="margin-top:14px">Choose a product and workspace.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vault" class="section">
+      <div class="split">
+        <div class="card">
+          <h3>Creative Vault</h3>
+          <p>Saved prompts, copy, and campaign outputs stay attached to each product so you don’t lose what worked.</p>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Product</label><select id="vaultProduct"></select></div>
+            <div class="field"><label>Vault Section</label><select id="vaultFilter"><option>All</option><option>Copy</option><option>Prompt</option><option>Campaign</option></select></div>
+          </div>
+          <div class="actions" style="margin-top:16px">
+            <button class="btn primary" id="refreshVaultBtn">Refresh Vault</button>
+            <button class="btn soft" id="clearVaultBtn">Clear Selected Product Vault</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Vault Summary</h3>
+          <div id="vaultSummary" class="output" style="margin-top:14px">Choose a product to view saved materials.</div>
+        </div>
+      </div>
+      <div class="section-title"><h3>Saved Items</h3><span>Approve, reuse, copy, or clean up later</span></div>
+      <div id="vaultItems" class="vault-group"></div>
+      <div id="vaultEmpty" class="empty">No saved vault items yet.</div>
+    </section>
+
+
+    <section id="generators" class="section">
+      <div class="section-title"><h3>Generator Vault</h3><span>Your generator collection from the multi-user hub, blended into the business system</span></div>
+      <div class="card">
+        <div class="actions"><button class="btn primary" id="mergedAddGenerator">+ Add Generator</button><button class="btn ghost" id="mergedUploadFolder">Upload Generator Folder</button><input id="mergedFolderInput" type="file" webkitdirectory directory multiple hidden></div>
+        <div class="merged-toolbar"><input id="mergedGeneratorSearch" type="search" placeholder="Search generator name, description, or category"><select id="mergedGeneratorFilter"><option value="all">All Generators</option><option value="favorites">Favorites</option><option value="folder">Uploaded Folders</option><option value="Active">Active</option><option value="Testing">Testing</option><option value="Draft">Draft</option><option value="Archived">Archived</option></select><select id="mergedGeneratorCategory"><option value="all">All Categories</option><option>General</option><option>Image Generator</option><option>Prompt Generator</option><option>Video Generator</option><option>UGC Generator</option><option>Mockup Generator</option><option>Stationery Generator</option><option>Business Generator</option><option>Content Generator</option></select></div>
+        <div id="mergedGeneratorGrid" class="merged-grid"></div><div id="mergedGeneratorEmpty" class="empty">No generators saved yet.</div>
+      </div>
+    </section>
+
+    <section id="ideaBrain" class="section">
+      <div class="grid cols2">
+        <div class="card"><div class="pill">IDEA BRAIN</div><h3>Develop the idea before you build it</h3><p>Use this for product ideas, generator ideas, campaigns, content concepts, or business systems. Then turn the idea into a project or prefill a product record.</p><div id="mergedIdeaMessages" class="idea-messages"></div><div class="field"><label>Your Idea</label><textarea id="mergedIdeaInput" placeholder="Example: I want a generator that helps beginners turn one idea into a full digital product launch..."></textarea></div><div class="actions" style="margin-top:14px"><button class="btn primary" id="mergedDevelopIdea">Develop Idea</button><button class="btn ghost" id="mergedClearIdeas">Clear Conversation</button></div></div>
+        <div class="card"><h3>Turn the latest idea into...</h3><p>No retyping. Move the idea straight into the next workspace.</p><div class="actions" style="margin-top:14px"><button class="btn primary" id="mergedIdeaProduct">Product Draft</button><button class="btn ghost" id="mergedIdeaProject">Business Project</button><button class="btn ghost" id="mergedIdeaGenerator">Generator Record</button></div><div id="mergedIdeaLatest" class="output" style="margin-top:14px;min-height:150px">Develop an idea first.</div></div>
+      </div>
+    </section>
+
+    <section id="workspaceStudio" class="section">
+      <div class="section-title"><h3>Workspace Studio</h3><span>The useful pieces from the old multi-user hub, without repeating the Business Hub pages you already have</span></div>
+      <div class="merged-tabs" id="mergedWorkspaceTabs"><button class="active" data-merged-tab="projects">Business Projects</button><button data-merged-tab="promptStudio">Universal Prompt Studio</button><button data-merged-tab="favorites">Favorite Styles</button><button data-merged-tab="storyboards">Storyboards</button><button data-merged-tab="ugc">UGC Content</button><button data-merged-tab="stationery">Stationery</button></div>
+      <div id="mergedPaneProjects" class="merged-pane active"><div class="card"><div class="actions"><button class="btn primary" id="mergedAddProject">+ New Business Project</button></div><div id="mergedProjectGrid" class="merged-grid" style="margin-top:14px"></div><div id="mergedProjectEmpty" class="empty">No business projects yet.</div></div></div>
+      <div id="mergedPanePromptStudio" class="merged-pane"><div class="grid cols2"><div class="card"><h3>Universal Prompt Studio</h3><div class="form-grid" style="margin-top:14px"><div class="field"><label>Prompt Title</label><input id="mergedPromptTitle"></div><div class="field"><label>Output Format</label><select id="mergedPromptFormat"><option>General Prompt</option><option>Image Prompt</option><option>Video Prompt</option><option>Social Media Prompt</option><option>Product Description Prompt</option><option>UGC Prompt</option><option>Website Prompt</option><option>Custom Instructions</option></select></div><div class="field full"><label>Goal</label><textarea id="mergedPromptGoal"></textarea></div><div class="field"><label>Audience</label><input id="mergedPromptAudience"></div><div class="field"><label>Main Subject</label><input id="mergedPromptSubject"></div><div class="field full"><label>Style / Creative Direction</label><textarea id="mergedPromptStyle"></textarea></div><div class="field full"><label>Must Include</label><textarea id="mergedPromptInclude"></textarea></div><div class="field full"><label>Avoid</label><textarea id="mergedPromptAvoid"></textarea></div></div><div class="actions" style="margin-top:14px"><button class="btn primary" id="mergedBuildPrompt">Build Prompt</button><button class="btn ghost" id="mergedSavePrompt">Save Prompt</button></div></div><div class="card"><h3>Prompt Preview</h3><div id="mergedPromptOutput" class="output" style="margin-top:14px">Fill out the builder and click Build Prompt.</div></div></div></div>
+      <div id="mergedPaneFavorites" class="merged-pane"><div class="card"><div class="actions"><button class="btn primary" data-add-collection="favorites">+ Add Favorite Style</button></div><div id="mergedFavoritesGrid" class="collection-grid" style="margin-top:14px"></div></div></div>
+      <div id="mergedPaneStoryboards" class="merged-pane"><div class="card"><div class="actions"><button class="btn primary" data-add-collection="storyboards">+ Add Storyboard</button></div><div id="mergedStoryboardsGrid" class="collection-grid" style="margin-top:14px"></div></div></div>
+      <div id="mergedPaneUgc" class="merged-pane"><div class="card"><div class="actions"><button class="btn primary" data-add-collection="ugc">+ Add UGC Item</button></div><div id="mergedUgcGrid" class="collection-grid" style="margin-top:14px"></div></div></div>
+      <div id="mergedPaneStationery" class="merged-pane"><div class="card"><div class="actions"><button class="btn primary" data-add-collection="stationery">+ Add Stationery Item</button></div><div id="mergedStationeryGrid" class="collection-grid" style="margin-top:14px"></div></div></div>
+    </section>
+  
+    <section id="account" class="section">
+      <div class="section-title"><h3>Account & Workspace</h3><span>Your login, profile, private cloud workspace, and brand ownership</span></div>
+      <div class="split">
+        <div class="card">
+          <h3>Account</h3>
+          <div class="account-status" style="margin-top:12px"><span class="sync-dot" id="accountSyncDot"></span><span id="accountSyncText">Checking cloud connection...</span></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Email</label><input id="accountEmail" readonly></div>
+            <div class="field"><label>Preferred Name</label><input id="accountPreferredName" placeholder="What should the hub call you?"></div>
+          </div>
+          <div class="actions" style="margin-top:14px"><button class="btn primary" id="saveAccountProfileBtn">Save Profile</button><button class="btn soft" id="changePasswordBtn">Change Password</button><button class="btn soft" id="logoutAccountBtn">Log Out</button></div>
+        </div>
+        <div class="card">
+          <h3>Private Workspace</h3>
+          <p>Your business data is tied to your signed-in user ID and synced into your own Supabase-protected workspace settings.</p>
+          <div class="account-status" style="margin-top:14px"><b>White-label behavior:</b> new accounts start without your brand, products, generators, campaigns, or saved creative. Each person creates their own.</div>
+          <div class="actions" style="margin-top:14px"><button class="btn soft" id="syncNowBtn">Sync Now</button><button class="btn soft" id="exportAccountBackupBtn">Export My Workspace</button><button class="btn soft" id="importAccountBackupBtn">Import Existing Workspace</button><input id="accountBackupFile" type="file" accept="application/json" hidden></div>
+        </div>
+      </div>
+      <div class="section-title"><h3>Brand Assets for This Account</h3><span>These are private to the signed-in workspace</span></div>
+      <div class="card">
+        <div class="brand-upload-grid">
+          <div><div class="field"><label>Logo</label><input id="accountLogoUpload" type="file" accept="image/*"></div><div id="accountLogoPreview" class="brand-asset-preview" style="margin-top:10px"><span class="subtle-note">No logo uploaded yet.</span></div></div>
+          <div><div class="field"><label>Brand Kit / Brand Board</label><input id="accountKitUpload" type="file" accept="image/*"></div><div id="accountKitPreview" class="brand-asset-preview" style="margin-top:10px"><span class="subtle-note">No brand kit uploaded yet.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<div class="toast" id="toast"></div><div id="mergedModal" class="merged-modal hidden"><div class="merged-modal-card"><div class="merged-modal-head"><h3 id="mergedModalTitle">Add Item</h3><button class="btn ghost" id="mergedModalClose">Close</button></div><div id="mergedModalBody"></div></div></div>
+<script>
+const $=(s)=>document.querySelector(s), $$=(s)=>[...document.querySelectorAll(s)];
+const STORE_BASE='glamAgencyOS_v1';
+function STORE(){return window.GLAM_SCOPED_KEY?window.GLAM_SCOPED_KEY(STORE_BASE):STORE_BASE;}
+let data=loadData();
+let lastOutputs={launch:'', whole:'', visual:'', platform:''};
+let currentVisualTab='thumb';
+const pageMeta={
+  dashboard:['Executive Dashboard','Your bright glam business operating system for products, visuals, platforms, launches, and reusable saved creative.'],
+  brand:['Brand Intelligence','Your reusable brand brain: colors, voice, style, audience, guardrails, and the visual direction every output should follow.'],
+  products:['Product Library','Every product saved once and reusable for listings, visuals, launches, and content.'],
+  builder:['Product Builder','Capture the full product record so the rest of the hub can stop making you re-enter the same info.'],
+  launch:['Launch Lab','Get real launch recommendations, a full launch package, and a campaign plan for any saved product.'],
+  visuals:['Visual Studio','Generate your branded thumbnail prompts, mockup prompts, and production briefs with the same output style every time.'],
+  platforms:['Platform Studio','Create Payhip, website, Pinterest, TikTok, YouTube, Snapchat, Lemon8, email, and CTA content from one product record.'],
+  vault:['Creative Vault','Saved prompts, copy, and campaigns stay attached to the product they came from.']
+};
+function defaultBrand(){
+  return {
+    name:'', persona:'', catchphrase:'', headlineFont:'', bodyFont:'',
+    voice:'', style:'', website:'', store:'', audience:'',
+    primaryColor:'#168FEA', secondaryColor:'#103B63', logoData:'', kitData:''
+  }
+}
+function loadData(){
+  try{
+    const raw=localStorage.getItem(STORE());
+    if(raw){
+      const parsed=JSON.parse(raw);
+      if(!parsed.brand) parsed.brand=defaultBrand();
+      if(!parsed.products) parsed.products=[];
+      parsed.products.forEach(p=>{ if(!p.vault) p.vault=[]; });
+      return parsed;
+    }
+  }catch(err){}
+  return {brand:defaultBrand(),products:[]};
+}
+function saveData(){ localStorage.setItem(STORE(), JSON.stringify(data)); if(window.GLAM_SYNC_WORKSPACE) window.GLAM_SYNC_WORKSPACE(); renderAll(); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200); }
+function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(){ return 'p_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); }
+function nowLabel(){ return new Date().toLocaleString(); }
+function go(id){
+  $$('.section').forEach(s=>s.classList.toggle('active', s.id===id));
+  $$('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.section===id));
+  $('#pageTitle').textContent=pageMeta[id][0];
+  $('#pageSub').textContent=pageMeta[id][1];
+  if(id==='vault') renderVault();
+  if(id==='launch') updateProjectStatus();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$$('[data-section]').forEach(b=>b.onclick=()=>go(b.dataset.section));
+$$('[data-goto]').forEach(b=>b.onclick=()=>go(b.dataset.goto));
+function populateBrand(){
+  const b=data.brand;
+  $('#brandName').value=b.name||'';
+  $('#brandPersona').value=b.persona||'';
+  $('#brandCatchphrase').value=b.catchphrase||'';
+  $('#brandHeadlineFont').value=b.headlineFont||'';
+  $('#brandBodyFont').value=b.bodyFont||'';
+  $('#brandVoice').value=b.voice||'';
+  $('#brandStyle').value=b.style||'';
+  $('#brandWebsite').value=b.website||'';
+  $('#brandStore').value=b.store||'';
+  $('#brandAudience').value=b.audience||'';
+  const pc=$('#brandPrimaryColor'), sc=$('#brandSecondaryColor'); if(pc)pc.value=b.primaryColor||'#168FEA'; if(sc)sc.value=b.secondaryColor||'#103B63';
+}
+function collectBrand(){
+  data.brand={
+    name:$('#brandName').value.trim(),
+    persona:$('#brandPersona').value.trim(),
+    catchphrase:$('#brandCatchphrase').value.trim(),
+    headlineFont:$('#brandHeadlineFont').value.trim(),
+    bodyFont:$('#brandBodyFont').value.trim(),
+    voice:$('#brandVoice').value.trim(),
+    style:$('#brandStyle').value.trim(),
+    website:$('#brandWebsite').value.trim(),
+    store:$('#brandStore').value.trim(),
+    audience:$('#brandAudience').value.trim(),
+    primaryColor:$('#brandPrimaryColor')?.value||'#168FEA', secondaryColor:$('#brandSecondaryColor')?.value||'#103B63',
+    logoData:data.brand?.logoData||'', kitData:data.brand?.kitData||''
+  };
+}
+['brandName','brandPersona','brandCatchphrase','brandHeadlineFont','brandBodyFont','brandVoice','brandStyle','brandWebsite','brandStore','brandAudience','brandPrimaryColor','brandSecondaryColor'].forEach(id=>{
+  document.addEventListener('input', (e)=>{ if(e.target && e.target.id===id){ collectBrand(); saveData(); } });
+});
+function baseProduct(){
+  return {
+    id:'', name:'', internalName:'', category:'Prompt Pack', format:'', price:'', regularPrice:'', salePrice:'', status:'Planning', launchDate:'',
+    summary:'', problem:'', transformation:'', primaryBenefit:'', secondaryBenefits:'', includes:'', bonuses:'', rights:'', delivery:'',
+    audience:'', skill:'', painPoints:'', desiredResult:'', buyReasons:'', hesitations:'', payhipUrl:'', websiteUrl:'', cta:'', primaryAngle:'', secondaryAngles:'', keywords:'', seo:'',
+    createdAt:'', updatedAt:'', vault:[]
+  };
+}
+function getFormProduct(){
+  return {
+    id:$('#productId').value.trim()||uid(),
+    name:$('#productName').value.trim(),
+    internalName:$('#productInternalName').value.trim(),
+    category:$('#productCategory').value,
+    format:$('#productFormat').value.trim(),
+    price:$('#productPrice').value.trim(),
+    regularPrice:$('#productRegularPrice').value.trim(),
+    salePrice:$('#productSalePrice').value.trim(),
+    status:$('#productStatus').value,
+    launchDate:$('#productLaunchDate').value,
+    summary:$('#productSummary').value.trim(),
+    problem:$('#productProblem').value.trim(),
+    transformation:$('#productTransformation').value.trim(),
+    primaryBenefit:$('#productPrimaryBenefit').value.trim(),
+    secondaryBenefits:$('#productSecondaryBenefits').value.trim(),
+    includes:$('#productIncludes').value.trim(),
+    bonuses:$('#productBonuses').value.trim(),
+    rights:$('#productRights').value.trim(),
+    delivery:$('#productDelivery').value.trim(),
+    audience:$('#productAudience').value.trim(),
+    skill:$('#productSkill').value.trim(),
+    painPoints:$('#productPainPoints').value.trim(),
+    desiredResult:$('#productDesiredResult').value.trim(),
+    buyReasons:$('#productBuyReasons').value.trim(),
+    hesitations:$('#productHesitations').value.trim(),
+    payhipUrl:$('#productPayhipUrl').value.trim(),
+    websiteUrl:$('#productWebsiteUrl').value.trim(),
+    cta:$('#productCTA').value.trim(),
+    primaryAngle:$('#productPrimaryAngle').value.trim(),
+    secondaryAngles:$('#productSecondaryAngles').value.trim(),
+    keywords:$('#productKeywords').value.trim(),
+    seo:$('#productSEO').value.trim(),
+    createdAt:'', updatedAt:new Date().toISOString(), vault:[]
+  };
+}
+function clearProductForm(){
+  $('#productId').value='';
+  ['productName','productInternalName','productFormat','productPrice','productRegularPrice','productSalePrice','productSummary','productProblem','productTransformation','productPrimaryBenefit','productSecondaryBenefits','productIncludes','productBonuses','productRights','productDelivery','productAudience','productSkill','productPainPoints','productDesiredResult','productBuyReasons','productHesitations','productPayhipUrl','productWebsiteUrl','productCTA','productPrimaryAngle','productSecondaryAngles','productKeywords','productSEO'].forEach(id=>$('#'+id).value='');
+  $('#productCategory').selectedIndex=0; $('#productStatus').selectedIndex=0; $('#productLaunchDate').value='';
+}
+function findProduct(id){ return data.products.find(p=>p.id===id); }
+function saveProduct(){
+  const p=getFormProduct();
+  if(!p.name){ toast('Add a product name first.'); return; }
+  const existing=findProduct(p.id);
+  if(existing){
+    p.createdAt=existing.createdAt||new Date().toISOString();
+    p.vault=existing.vault||[];
+    Object.assign(existing,p);
+    toast('Product updated.');
+  }else{
+    p.createdAt=new Date().toISOString();
+    p.vault=[];
+    data.products.unshift(p);
+    toast('Product saved.');
+  }
+  saveData();
+  selectProductAcrossHub(p.id);
+}
+function selectProductAcrossHub(id){
+  ['launchProduct','visualProduct','platformProduct','vaultProduct'].forEach(sel=>{ const el=$('#'+sel); if(el){ el.value=id; }});
+  renderAll();
+}
+function loadProductIntoForm(id){
+  const p=findProduct(id); if(!p) return;
+  $('#productId').value=p.id; $('#productName').value=p.name||''; $('#productInternalName').value=p.internalName||''; $('#productCategory').value=p.category||'Prompt Pack'; $('#productFormat').value=p.format||'';
+  $('#productPrice').value=p.price||''; $('#productRegularPrice').value=p.regularPrice||''; $('#productSalePrice').value=p.salePrice||''; $('#productStatus').value=p.status||'Planning'; $('#productLaunchDate').value=p.launchDate||'';
+  $('#productSummary').value=p.summary||''; $('#productProblem').value=p.problem||''; $('#productTransformation').value=p.transformation||''; $('#productPrimaryBenefit').value=p.primaryBenefit||''; $('#productSecondaryBenefits').value=p.secondaryBenefits||'';
+  $('#productIncludes').value=p.includes||''; $('#productBonuses').value=p.bonuses||''; $('#productRights').value=p.rights||''; $('#productDelivery').value=p.delivery||'';
+  $('#productAudience').value=p.audience||''; $('#productSkill').value=p.skill||''; $('#productPainPoints').value=p.painPoints||''; $('#productDesiredResult').value=p.desiredResult||''; $('#productBuyReasons').value=p.buyReasons||''; $('#productHesitations').value=p.hesitations||'';
+  $('#productPayhipUrl').value=p.payhipUrl||''; $('#productWebsiteUrl').value=p.websiteUrl||''; $('#productCTA').value=p.cta||''; $('#productPrimaryAngle').value=p.primaryAngle||''; $('#productSecondaryAngles').value=p.secondaryAngles||''; $('#productKeywords').value=p.keywords||''; $('#productSEO').value=p.seo||'';
+  go('builder');
+}
+window.loadProductIntoForm=loadProductIntoForm;
+function deleteProduct(id){
+  if(!confirm('Delete this product record?')) return;
+  data.products=data.products.filter(p=>p.id!==id); saveData(); toast('Product deleted.');
+}
+window.deleteProduct=deleteProduct;
+function productLabel(p){ return `${p.name}${p.price?' — '+p.price:''}`; }
+function recommendationList(p){
+  const type=(p.category||'').toLowerCase();
+  const required=['Payhip thumbnail','Website thumbnail','Product description','CTA bank'];
+  const strong=['Pinterest pin','TikTok promo','Product mockup'];
+  const optional=['Email announcement','Snapchat promo','Facebook post'];
+  if(type.includes('workshop')){
+    return {required:[...required,'Registration flyer','Workshop promo graphic','Landing page copy'],strong:['Email reminder','TikTok promo','YouTube promo idea','Lemon8 post'],optional:['Facebook event post','Snapchat story promo']};
+  }
+  if(type.includes('generator')||type.includes('tool')){
+    return {required:[...required,'Feature preview graphic','What it does graphic'],strong:['Tutorial / demo cover','YouTube content angle','TikTok walkthrough'],optional:['Lemon8 breakdown','Snapchat promo']};
+  }
+  if(type.includes('membership')||type.includes('community')){
+    return {required:[...required,'Community promo graphic','Offer stack graphic'],strong:['Skool announcement','TikTok promo','Email launch'],optional:['Facebook post','YouTube intro video']};
+  }
+  if(type.includes('prompt')){
+    return {required:[...required,'What’s inside graphic','Prompt preview graphic'],strong:['Usage steps graphic','Pinterest pin','TikTok promo','YouTube thumbnail'],optional:['Lemon8 post','Snapchat promo']};
+  }
+  return {required:[...required,'What’s inside graphic'],strong:['Pinterest pin','TikTok promo','YouTube content angle','Mockup'],optional:['Lemon8 post','Snapchat promo','Email announcement']};
+}
+function assetSize(label){
+  if(/pinterest/i.test(label)) return '1000 × 1500';
+  if(/youtube thumbnail/i.test(label)) return '1280 × 720';
+  if(/youtube/i.test(label)) return '1280 × 720 or 2560 × 1440';
+  if(/tiktok|snapchat/i.test(label)) return '1080 × 1920';
+  if(/lemon8/i.test(label)) return '1242 × 1660';
+  if(/facebook/i.test(label)) return '1080 × 1350';
+  if(/website/i.test(label)) return 'Use website card ratio';
+  if(/payhip/i.test(label)) return 'Use Payhip image ratio';
+  return 'Platform-specific sizing';
+}
+function checklistStats(p){
+  const vault=p.vault||[];
+  const setupItems=[p.name,p.category,p.summary,p.includes,p.audience,p.price].filter(Boolean).length;
+  const storeItems=[p.payhipUrl,p.websiteUrl,p.cta,p.primaryAngle].filter(Boolean).length;
+  const visualItems=vault.filter(v=>v.kind==='Prompt').length;
+  const copyItems=vault.filter(v=>v.kind==='Copy').length;
+  const campaignItems=vault.filter(v=>v.kind==='Campaign').length;
+  return {
+    setup:{done:setupItems,total:6},
+    store:{done:storeItems,total:4},
+    visuals:{done:Math.min(visualItems,6),total:6},
+    marketing:{done:Math.min(copyItems,6),total:6},
+    launch:{done:Math.min(campaignItems,3),total:3}
+  };
+}
+function renderStatusCards(p){
+  const stats=checklistStats(p); const items=[['Product Setup',stats.setup],['Store',stats.store],['Visuals',stats.visuals],['Marketing',stats.marketing],['Launch',stats.launch]];
+  $('#projectStatus').innerHTML=items.map(([label,obj])=>`<div class="check-item"><strong>${label}</strong><div class="progressbar"><span style="width:${Math.round(obj.done/obj.total*100)}%"></span></div><small>${obj.done} of ${obj.total} complete</small></div>`).join('');
+}
+function needsAttentionCard(p){
+  const s=checklistStats(p);
+  const gaps=[];
+  if(s.visuals.done<s.visuals.total) gaps.push('visuals');
+  if(s.marketing.done<s.marketing.total) gaps.push('marketing');
+  if(s.launch.done<s.launch.total) gaps.push('launch');
+  return `<div class="card"><b style="display:block;color:var(--deep);font-size:14px;margin-bottom:6px">${esc(p.name)}</b><p>Status: ${esc(p.status||'Planning')}</p><ul class="list"><li>${gaps.length?('Still needs: '+gaps.join(', ')):'Looks strong. Keep repurposing.'}</li><li>${esc(p.primaryBenefit||p.transformation||p.summary||'Add a stronger result statement for better marketing.')}</li></ul><div class="mini-actions" style="margin-top:12px"><button class="text-link" onclick="loadProductIntoForm('${p.id}')">Edit product →</button><button class="text-link" onclick="setLaunchProduct('${p.id}')">Open in Launch Lab →</button></div></div>`;
+}
+function renderProductCards(){
+  const list=$('#productList');
+  list.innerHTML='';
+  $('#productEmpty').style.display=data.products.length?'none':'block';
+  data.products.forEach(p=>{
+    const stats=checklistStats(p);
+    const d=document.createElement('div');
+    d.className='card product';
+    d.innerHTML=`<span class="status">${esc(p.status||'Saved')}</span><h4>${esc(p.name)}</h4><p>${esc(p.summary||'No summary added yet.')}</p><div class="meta"><span>${esc(p.category)}</span><span>${esc(p.price||'No price')}</span><span>${stats.visuals.done+stats.marketing.done+stats.launch.done} saved outputs</span></div><footer><div class="mini-actions"><button class="text-link" onclick="loadProductIntoForm('${p.id}')">Open →</button><button class="text-link" onclick="deleteProduct('${p.id}')">Delete</button></div><small>${esc(p.launchDate||'')}</small></footer>`;
+    list.appendChild(d);
+  });
+}
+function renderDashboard(){
+  $('#metricProducts').textContent=data.products.length;
+  $('#metricVault').textContent=data.products.reduce((n,p)=>n+(p.vault?p.vault.length:0),0);
+  const dash=$('#dashboardProducts');
+  if(data.products.length){
+    dash.className='product-list'; dash.innerHTML='';
+    data.products.slice(0,3).forEach(p=>{
+      const d=document.createElement('div'); d.className='card product';
+      d.innerHTML=`<span class="status">${esc(p.status||'Ready')}</span><h4>${esc(p.name)}</h4><p>${esc(p.transformation||p.summary||'Saved product record')}</p><div class="meta"><span>${esc(p.category)}</span><span>${esc(p.price||'')}</span></div><footer><button class="text-link" onclick="setLaunchProduct('${p.id}')">Continue →</button><small>${esc(p.launchDate||'')}</small></footer>`;
+      dash.appendChild(d);
+    });
+  } else { dash.className='empty'; dash.textContent='No products yet. Create one product record and your dashboard will start doing real work.'; }
+  const needs=$('#needsAttention');
+  if(data.products.length){ needs.innerHTML=data.products.slice(0,3).map(needsAttentionCard).join(''); }
+  else { needs.innerHTML='<div class="empty" style="grid-column:1/-1">Nothing to show yet. Build your first product and the dashboard will guide you.</div>'; }
+}
+function renderSelects(){
+  ['launchProduct','visualProduct','platformProduct','vaultProduct'].forEach(id=>{
+    const sel=$('#'+id); if(!sel) return;
+    const current=sel.value;
+    sel.innerHTML=data.products.length?data.products.map(p=>`<option value="${p.id}">${esc(productLabel(p))}</option>`).join(''):'<option value="">No products saved</option>';
+    if(current && data.products.some(p=>p.id===current)) sel.value=current;
+  });
+  updateProjectStatus();
+}
+function renderAll(){ populateBrand(); renderDashboard(); renderProductCards(); renderSelects(); renderVault(); if(window.GLAM_AFTER_RENDER) window.GLAM_AFTER_RENDER(); }
+function setLaunchProduct(id){
+  $('#launchProduct').value=id; updateProjectStatus(); go('launch');
+}
+window.setLaunchProduct=setLaunchProduct;
+function getSelectedProduct(selectId){ const id=$('#'+selectId).value; return findProduct(id); }
+function brandPromptPrefix(){
+  const b=data.brand;
+  return `${b.style||defaultBrand().style} Use ${b.voice||defaultBrand().voice} brand language. Keep all visible text correctly spelled, fully visible, unobstructed, and easy to read.`;
+}
+function recommendLaunchPackage(p){
+  const rec=recommendationList(p);
+  const audience=p.audience||data.brand.audience;
+  const result=p.transformation||p.primaryBenefit||p.desiredResult||p.summary||'deliver a clear result';
+  return `RECOMMENDED LAUNCH PACKAGE — ${p.name}\n\nPRODUCT CATEGORY\n${p.category}\n\nWHO IT IS FOR\n${audience}\n\nCORE RESULT\n${result}\n\nREQUIRED\n${rec.required.map(x=>`• ${x}`).join('\n')}\n\nSTRONGLY RECOMMENDED\n${rec.strong.map(x=>`• ${x}`).join('\n')}\n\nOPTIONAL\n${rec.optional.map(x=>`• ${x}`).join('\n')}\n\nPRIMARY SALES ANGLE\n${p.primaryAngle||p.problem||'Lead with the main problem and the simpler result this product creates.'}\n\nCTA\n${p.cta||'See what’s inside.'}`;
+}
+function wholeLaunch(p){
+  const link=p.payhipUrl||p.websiteUrl||'Add product link here.';
+  const result=p.transformation||p.primaryBenefit||p.desiredResult||'make the process easier and faster';
+  const inc=p.includes||'your main included resources';
+  return `CREATE MY WHOLE LAUNCH — ${p.name}\n\nPRODUCT\n• Title: ${p.name}\n• Main result: ${result}\n• Includes: ${inc}\n• Primary CTA: ${p.cta||'Grab it now'}\n\nSTORE\n• Payhip title + description\n• Website product copy\n• Core benefits\n• SEO terms\n\nVISUALS\n• Payhip thumbnail prompt\n• Website thumbnail prompt\n• Pinterest graphic prompt\n• Product mockup prompt\n• What’s Inside graphic\n• Launch flyer prompt\n\nMARKETING\n• Pinterest package\n• TikTok package\n• YouTube package\n• Snapchat promo\n• Lemon8 package\n• Facebook post\n• Email announcement\n• CTA bank\n\n7-DAY FLOW\nDay 1: Tease the problem and desired result.\nDay 2: Introduce ${p.name}.\nDay 3: Show what’s included — ${inc}.\nDay 4: Share why it makes the process easier: ${result}.\nDay 5: Post a demo / explainer / transformation angle.\nDay 6: Reminder + social proof style message.\nDay 7: Final CTA push.\n\nMAIN LINK\n${link}`;
+}
+function campaignPlan(p,type,goal){
+  const link=p.payhipUrl||p.websiteUrl||'Add product link here.';
+  return `${type.toUpperCase()} — ${p.name}\n\nCAMPAIGN GOAL\n${goal||'Increase visibility and sales'}\n\nCORE MESSAGE\n${p.summary||p.primaryAngle||p.transformation||'Position the product as a clear and practical solution.'}\n\nASSET STACK\n• Campaign hero graphic\n• Payhip / website refresh graphic\n• Pinterest pin\n• TikTok hook + short-form promo\n• YouTube content angle or thumbnail copy\n• Snapchat story promo\n• Lemon8 post\n• Email reminder\n• CTA variation bank\n\nCAMPAIGN FLOW\n1. Tease the problem or desired result.\n2. Introduce ${p.name}.\n3. Show what’s included: ${p.includes||'highlight the strongest resources'}.\n4. Show the result: ${p.transformation||p.primaryBenefit||'make the process easier and faster'}.\n5. Push one clear CTA.\n6. Reuse the strongest message across platforms.\n\nMAIN CTA\n${p.cta||'See what’s inside.'}\n\nLINK\n${link}`;
+}
+function visualOutputFor(p){
+  const purpose=$('#visualPurpose').value;
+  const mockType=$('#mockupType').value;
+  const env=$('#mockupEnv').value;
+  if(currentVisualTab==='thumb'){
+    return `THUMBNAIL PROMPT — ${p.name}\n\nCreate a branded ${purpose} for "${p.name}".\n\nPRODUCT TYPE\n${p.category}\n\nMAIN GOAL\n${p.transformation||p.primaryBenefit||p.summary||'Promote the product clearly and attractively'}\n\nWHAT'S INCLUDED\n${p.includes||'Use the strongest included items as proof points.'}\n\nAUDIENCE\n${p.audience||data.brand.audience}\n\nVISUAL DIRECTION\n${brandPromptPrefix()}\n\nCOPY HIERARCHY\n1. Product name\n2. Clear benefit or promise\n3. What’s included or strongest proof point\n4. CTA\n\nPLATFORM SIZE\n${purpose} — ${assetSize(purpose)}\n\nDO NOT USE\nCrowns, tiaras, HUD overlays, dashboards, charts, paint brush strokes, random floating icons, or a dark heavy overall mood.`;
+  }
+  if(currentVisualTab==='mockup'){
+    return `MOCKUP PROMPT — ${p.name}\n\nCreate a premium ${mockType} for "${p.name}" staged in a ${env} setting.\n\nPRODUCT TYPE\n${p.category}\n\nWHAT TO SHOW\n${p.includes||p.summary||'Show the product cover, interface, or core materials clearly.'}\n\nVISUAL DIRECTION\nUse a bright, luxury glam composition with white and soft silver surfaces, Caribbean sapphire accents, polished metallic details, realistic blue butterflies as elegant accents when appropriate, subtle bling, clean editorial staging, realistic materials, and a commercial mockup finish. Make it highly branded, decorative, and polished without clutter.\n\nSHOWCASE GOAL\n${p.primaryBenefit||p.transformation||'Make the product feel premium and desirable.'}\n\nDO NOT USE\nCrowns, fake tech overlays, clutter, unreadable screens, or dark moody lighting.`;
+  }
+  return `PRODUCTION BRIEF — ${p.name}\n\nPRODUCT\n${p.name}\n\nTYPE\n${p.category}\n\nTARGET AUDIENCE\n${p.audience||data.brand.audience}\n\nGOAL\n${p.transformation||p.primaryBenefit||p.summary||'Promote and sell the product clearly'}\n\nASSET\n${purpose}\n\nVISUAL DIRECTION\n${data.brand.style}\n\nCOPY HIERARCHY\n1. Product name\n2. Benefit / promise\n3. What’s included or strongest proof point\n4. CTA\n\nDO NOT USE\nCrowns, tiaras, HUD overlays, dashboards, charts, paint brush strokes, random icons, or clutter.`;
+}
+function platformOutputFor(p,type){
+  const result=p.transformation||p.primaryBenefit||p.desiredResult||'make the process easier and faster';
+  const inc=p.includes||'the main included resources';
+  const audience=p.audience||data.brand.audience;
+  const link=p.payhipUrl||p.websiteUrl||'Add product link here.';
+  if(type==='Payhip Pack') return `PAYHIP PACK — ${p.name}\n\nPRODUCT TITLE\n${p.name}\n\nSHORT DESCRIPTION\n${p.summary||`A practical digital product designed to help you ${result}.`}\n\nFULL DESCRIPTION\n${p.summary||`This product was created to help you ${result}.`}\n\nWHAT'S INSIDE\n${inc}\n\nWHO IT'S FOR\n${audience}\n\nHOW IT WORKS\nPurchase → access the product → use the resources → create with more clarity and speed.\n\nBENEFITS\n• ${p.primaryBenefit||result}\n• ${p.secondaryBenefits||'Save time and reduce overthinking'}\n\nCTA\n${p.cta||'See what’s inside.'}\n\nSEO TERMS\n${p.seo||p.keywords||'Add keywords here.'}`;
+  if(type==='Website Pack') return `WEBSITE PACK — ${p.name}\n\nPRODUCT HEADLINE\n${p.name}\n\nSUBHEAD\n${p.primaryBenefit||result}\n\nDESCRIPTION\n${p.summary||`Created to help you ${result}.`}\n\nBULLETS\n• ${p.primaryBenefit||result}\n• ${p.secondaryBenefits||'Practical and beginner-friendly'}\n• Includes ${inc}\n\nCTA\n${p.cta||'Shop now'}\n\nLINK\n${link}`;
+  if(type==='Pinterest Pack') return `PINTEREST PACK — ${p.name}\n\nPIN TITLE\n${p.name}: A Simpler Way to ${result}\n\nPIN DESCRIPTION\nDiscover ${p.name}, created for ${audience}. It includes ${inc}. Save this pin and explore the product when you’re ready to make your workflow easier and more polished.\n\nKEYWORDS\n${p.keywords||'digital products, online business, content creation, beginners'}\n\nHASHTAGS\n#DigitalProducts #OnlineBusiness #ContentCreator #WomenInBusiness #GlamHustleHub\n\nCTA\nTap to see what’s inside.\n\nPIN GRAPHIC PROMPT NOTE\nUse your saved thumbnail style: bright, blingy, sapphire, silver, butterflies, strong readable typography.`;
+  if(type==='TikTok Pack') return `TIKTOK PACK — ${p.name}\n\n5 HOOKS\n1. Stop making this harder than it needs to be.\n2. If you’ve been trying to ${result}, this is for you.\n3. Here’s what’s inside ${p.name}.\n4. One product, way less overthinking.\n5. Let me show you how this makes ${result} easier.\n\nCAPTION\n${p.name} was made to help you ${result}. Inside you'll get ${inc}. If you want a simpler, more polished workflow, check it out.\n\nVIDEO IDEA\nShow the struggle → introduce ${p.name} → flash what’s included → show the result → end with CTA.\n\nON-SCREEN TEXT\n${p.name}\n${p.primaryBenefit||result}\n${p.cta||'Tap the link'}\n\nHASHTAGS\n#TikTokBusiness #DigitalProducts #WomenInBusiness #GlamHustleHub`;
+  if(type==='YouTube Pack') return `YOUTUBE PACK — ${p.name}\n\nTITLE IDEAS\n• ${p.name} | A Simpler Way to ${result}\n• How I Use ${p.name} to ${result}\n• What’s Inside ${p.name}?\n\nDESCRIPTION\nIn this video, I’m sharing ${p.name}, created to help ${audience} ${result}. Inside you’ll get ${inc}. If you want a more organized, polished way to create, this is for you.\n\nVIDEO OUTLINE\n1. The problem\n2. The product\n3. What’s included\n4. How to use it\n5. Why it helps\n6. CTA\n\nTHUMBNAIL COPY\n${p.name}\n${p.primaryBenefit||result}\n${p.cta||'See what’s inside'}`;
+  if(type==='Snapchat Pack') return `SNAPCHAT PACK — ${p.name}\n\nSTORY FLOW\n1. Quick hook: "Need help with ${result}?"\n2. Show the product: ${p.name}\n3. Flash what’s included: ${inc}\n4. CTA: ${p.cta||'Tap to check it out'}\n\nPROMO TEXT\nJust dropped: ${p.name} ✨ Made to help you ${result}.\n\nLINK\n${link}`;
+  if(type==='Lemon8 Pack') return `LEMON8 PACK — ${p.name}\n\nPOST TITLE\nHow I made ${result} easier with ${p.name}\n\nCOVER HEADLINE\n${p.name}\n${p.primaryBenefit||result}\n\nPOST STRUCTURE\n1. The struggle\n2. What this product is\n3. What’s inside\n4. How it helps\n5. CTA\n\nCAPTION\nIf you’ve been trying to ${result} without feeling overwhelmed, ${p.name} was made to help. It includes ${inc} and was designed for ${audience}.\n\nHASHTAGS\n#Lemon8Creator #DigitalProducts #SmallBusiness #WomenWhoCreate #GlamHustleHub`;
+  if(type==='Facebook Post') return `FACEBOOK POST — ${p.name}\n\n${p.name} is here. ✨\n\n${p.summary||`I created this to help you ${result}.`}\n\nYou’ll get: ${inc}.\n\nIf you’re ready for a simpler way to create, take a look here: ${link}`;
+  if(type==='Email Announcement') return `EMAIL ANNOUNCEMENT — ${p.name}\n\nSUBJECT\nMeet ${p.name}\n\nBODY\n${p.name} is officially here.\n\n${p.summary||`I created it to help you ${result}.`}\n\nInside, you'll get ${inc}. If you’ve been wanting a simpler way to create, this was made for you.\n\nCTA\n${p.cta||'Take a look here'} — ${link}`;
+  if(type==='CTA Bank') return `CTA BANK — ${p.name}\n\n• See what’s inside\n• Grab the full product\n• Start creating faster\n• Make the process easier\n• Explore the details\n• Shop this digital resource\n• Save time and create with more clarity\n• Check out the full offer now`;
+  return `REPURPOSE ONE IDEA — ${p.name}\n\nCORE IDEA\n${p.primaryBenefit||p.transformation||p.summary||'A simpler way to create.'}\n\nTIKTOK\nFast hook + 15 second demo idea\n\nYOUTUBE\nTeaching or demonstration video angle\n\nPINTEREST\nSave-worthy graphic + clear promise\n\nLEMON8\nMini educational breakdown\n\nSNAPCHAT\nQuick story promo\n\nEMAIL\nShort reminder with CTA`;
+}
+function saveVaultItem(productId, kind, title, content){
+  const p=findProduct(productId); if(!p){ toast('Select a saved product first.'); return; }
+  if(!p.vault) p.vault=[];
+  p.vault.unshift({id:uid(), kind, title, content, createdAt:nowLabel()});
+  saveData();
+  $('#vaultProduct').value=productId;
+  renderVault();
+  toast('Saved to vault.');
+}
+function renderVault(){
+  const p=getSelectedProduct('vaultProduct') || data.products[0];
+  const itemsWrap=$('#vaultItems');
+  const empty=$('#vaultEmpty');
+  if(!p){ $('#vaultSummary').textContent='Choose a product to view saved materials.'; itemsWrap.innerHTML=''; empty.style.display='block'; return; }
+  $('#vaultProduct').value=p.id;
+  const filter=$('#vaultFilter').value||'All';
+  const items=(p.vault||[]).filter(v=>filter==='All'||v.kind===filter);
+  $('#vaultSummary').textContent=`PRODUCT: ${p.name}\nSaved items: ${(p.vault||[]).length}\nFilter: ${filter}\n\nUse this area to keep your best prompts, copy, and campaign plans attached to the right product.`;
+  itemsWrap.innerHTML='';
+  empty.style.display=items.length?'none':'block';
+  items.forEach(v=>{
+    const d=document.createElement('div'); d.className='vault-item';
+    d.innerHTML=`<header><div><b>${esc(v.title)}</b><div class="vault-meta">${esc(v.kind)} • ${esc(v.createdAt)}</div></div><div class="mini-actions"><button class="text-link" onclick="copyVault('${p.id}','${v.id}')">Copy</button><button class="text-link" onclick="deleteVault('${p.id}','${v.id}')">Delete</button></div></header><pre>${esc(v.content)}</pre>`;
+    itemsWrap.appendChild(d);
+  });
+}
+window.copyVault=function(pid,vid){ const p=findProduct(pid); const item=(p.vault||[]).find(v=>v.id===vid); if(item){ navigator.clipboard?.writeText(item.content).then(()=>toast('Copied.')); } };
+window.deleteVault=function(pid,vid){ const p=findProduct(pid); if(!p) return; p.vault=(p.vault||[]).filter(v=>v.id!==vid); saveData(); renderVault(); toast('Deleted from vault.'); };
+function updateProjectStatus(){ const p=getSelectedProduct('launchProduct')||data.products[0]; if(!p){ $('#projectStatus').innerHTML='<div class="empty" style="grid-column:1/-1">Select a product to view status.</div>'; return; } renderStatusCards(p); }
+$('#launchProduct').onchange=updateProjectStatus;
+$('#recommendLaunchBtn').onclick=()=>{ const p=getSelectedProduct('launchProduct'); if(!p){ toast('Save a product first.'); return; } lastOutputs.launch=recommendLaunchPackage(p); $('#launchOutput').textContent=lastOutputs.launch; updateProjectStatus(); };
+$('#wholeLaunchBtn').onclick=()=>{ const p=getSelectedProduct('launchProduct'); if(!p){ toast('Save a product first.'); return; } lastOutputs.whole=wholeLaunch(p); $('#launchOutput2').textContent=lastOutputs.whole; };
+$('#campaignPlanBtn').onclick=()=>{ const p=getSelectedProduct('launchProduct'); if(!p){ toast('Save a product first.'); return; } lastOutputs.whole=campaignPlan(p,$('#campaignType').value,$('#campaignGoal').value.trim()); $('#launchOutput2').textContent=lastOutputs.whole; };
+$('#saveLaunchOutputBtn').onclick=()=>{ const p=getSelectedProduct('launchProduct'); if(!p) return toast('Choose a product first.'); const content=($('#launchOutput2').textContent && $('#launchOutput2').textContent!=='Create the whole launch or build a campaign plan.')?$('#launchOutput2').textContent:$('#launchOutput').textContent; saveVaultItem(p.id,'Campaign','Launch / Campaign Output',content); };
+$$('#visualTabs button').forEach(btn=>btn.onclick=()=>{ $$('#visualTabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentVisualTab=btn.dataset.visualTab; });
+$('#makeVisualBtn').onclick=()=>{ const p=getSelectedProduct('visualProduct'); if(!p){ toast('Save a product first.'); return; } lastOutputs.visual=visualOutputFor(p); $('#visualOutput').textContent=lastOutputs.visual; };
+$('#saveVisualBtn').onclick=()=>{ const p=getSelectedProduct('visualProduct'); if(!p) return toast('Choose a product first.'); saveVaultItem(p.id,'Prompt', currentVisualTab==='thumb'?'Thumbnail Prompt':currentVisualTab==='mockup'?'Mockup Prompt':'Production Brief', $('#visualOutput').textContent); };
+$('#generatePlatformBtn').onclick=()=>{ const p=getSelectedProduct('platformProduct'); if(!p){ toast('Save a product first.'); return; } lastOutputs.platform=platformOutputFor(p,$('#platformType').value); $('#platformOutput').textContent=lastOutputs.platform; };
+$('#savePlatformBtn').onclick=()=>{ const p=getSelectedProduct('platformProduct'); if(!p) return toast('Choose a product first.'); saveVaultItem(p.id,'Copy',$('#platformType').value,$('#platformOutput').textContent); };
+$('#refreshVaultBtn').onclick=renderVault;
+$('#vaultProduct').onchange=renderVault; $('#vaultFilter').onchange=renderVault;
+$('#clearVaultBtn').onclick=()=>{ const p=getSelectedProduct('vaultProduct'); if(!p) return; if(!confirm('Clear all vault items for this product?')) return; p.vault=[]; saveData(); renderVault(); toast('Vault cleared.'); };
+$('#saveProductBtn').onclick=saveProduct; $('#clearProductBtn').onclick=clearProductForm;
+$('#createWholeLaunchFromBuilder').onclick=()=>{ const name=$('#productName').value.trim(); if(!name){ toast('Save or complete the product name first.'); return; } saveProduct(); const p=findProduct($('#productId').value); if(p){ $('#launchProduct').value=p.id; $('#launchOutput2').textContent=wholeLaunch(p); go('launch'); } };
+$('#exportBtn').onclick=()=>{ collectBrand(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='glam-business-hub-backup.json'; a.click(); URL.revokeObjectURL(a.href); toast('Backup exported.'); };
+$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').addEventListener('change',(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(reader.result);
+      if(!parsed.products) throw new Error('Invalid backup');
+      data={brand:parsed.brand||defaultBrand(),products:(parsed.products||[]).map(p=>({...baseProduct(),...p,vault:p.vault||[]}))};
+      localStorage.setItem(STORE(), JSON.stringify(data)); if(window.GLAM_SYNC_WORKSPACE) window.GLAM_SYNC_WORKSPACE();
+      renderAll();
+      toast('Backup imported.');
+    }catch(err){ alert('That backup file could not be imported.'); }
+  };
+  reader.readAsText(file);
+});
+renderAll();
+</script>
+
+<script>
+(function(){
+'use strict';
+const MKEY_BASE='glam_merged_workspace_v1', MDB_BASE='glam_generator_hub_merged', MSTORE='generatorFolders';
+const MKEY=()=>window.GLAM_SCOPED_KEY?window.GLAM_SCOPED_KEY(MKEY_BASE):MKEY_BASE;
+const MDB=()=>window.GLAM_SCOPED_DB?window.GLAM_SCOPED_DB(MDB_BASE):MDB_BASE;
+const mq=s=>document.querySelector(s), mqa=s=>[...document.querySelectorAll(s)];
+function mDefaults(){return {generators:[],projects:[],ideas:[],prompts:[],favorites:[],storyboards:[],ugc:[],stationery:[]}}
+function mLoad(){try{return Object.assign(mDefaults(),JSON.parse(localStorage.getItem(MKEY())||'{}'))}catch(e){return mDefaults()}}
+let mstate=mLoad(), mergedPrompt='';
+window.GLAM_GET_MERGED=()=>mstate; window.GLAM_SET_MERGED=(v)=>{mstate=Object.assign(mDefaults(),v||{});mSave();}; window.GLAM_RELOAD_MERGED=()=>{mstate=mLoad();mRenderAll();};
+function mSave(){localStorage.setItem(MKEY(),JSON.stringify(mstate)); if(window.GLAM_SYNC_WORKSPACE) window.GLAM_SYNC_WORKSPACE(); mRenderAll()}
+function mid(){return crypto.randomUUID?crypto.randomUUID():'m_'+Date.now()+Math.random().toString(36).slice(2)}
+function me(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function mToast(t){if(typeof toast==='function')toast(t)}
+function mModal(title,html){mq('#mergedModalTitle').textContent=title;mq('#mergedModalBody').innerHTML=html;mq('#mergedModal').classList.remove('hidden')}
+mq('#mergedModalClose').onclick=()=>mq('#mergedModal').classList.add('hidden');
+// Extend existing page metadata so navigation from the original hub remains seamless.
+if(typeof pageMeta!=='undefined'){
+  pageMeta.generators=['Generator Vault','Upload folders, save links, favorite, filter, and connect generators to your business workflow.'];
+  pageMeta.ideaBrain=['Idea Brain','Develop ideas and move them directly into products, projects, or generator records.'];
+  pageMeta.workspaceStudio=['Workspace Studio','Business projects, universal prompt building, favorite styles, storyboards, UGC, and stationery in one place.'];
+  pageMeta.account=['Account & Workspace','Manage your login, password, profile, private brand assets, backups, and cloud workspace.'];
+}
+function mOpenDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(MDB(),1);r.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(MSTORE))db.createObjectStore(MSTORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function mPutFolder(rec){const db=await mOpenDb();return new Promise((res,rej)=>{const tx=db.transaction(MSTORE,'readwrite');tx.objectStore(MSTORE).put(rec);tx.oncomplete=()=>{db.close();res()};tx.onerror=()=>rej(tx.error)})}
+async function mGetFolder(id){const db=await mOpenDb();return new Promise((res,rej)=>{const r=db.transaction(MSTORE,'readonly').objectStore(MSTORE).get(id);r.onsuccess=()=>{db.close();res(r.result)};r.onerror=()=>rej(r.error)})}
+async function mDeleteFolder(id){const db=await mOpenDb();return new Promise((res,rej)=>{const tx=db.transaction(MSTORE,'readwrite');tx.objectStore(MSTORE).delete(id);tx.oncomplete=()=>{db.close();res()};tx.onerror=()=>rej(tx.error)})}
+function productOpts(){try{return '<option value="">None</option>'+data.products.map((p,i)=>`<option value="${i}">${me(p.name)}</option>`).join('')}catch(e){return '<option value="">None</option>'}}
+function projectOpts(){return '<option value="">None</option>'+mstate.projects.map(p=>`<option value="${p.id}">${me(p.title)}</option>`).join('')}
+function renderGenerators(){
+ const q=(mq('#mergedGeneratorSearch')?.value||'').toLowerCase(), f=mq('#mergedGeneratorFilter')?.value||'all', c=mq('#mergedGeneratorCategory')?.value||'all';
+ const arr=mstate.generators.filter(g=>{const hit=(`${g.title} ${g.description} ${g.category}`).toLowerCase().includes(q);const fm=f==='all'||(f==='favorites'&&g.favorite)||(f==='folder'&&g.sourceType==='folder')||g.status===f;const cm=c==='all'||g.category===c;return hit&&fm&&cm});
+ mq('#mergedGeneratorEmpty').style.display=arr.length?'none':'block';
+ mq('#mergedGeneratorGrid').innerHTML=arr.map(g=>`<div class="card merged-card"><button class="merged-star ${g.favorite?'on':''}" onclick="mergedToggleGenFav('${g.id}')">★</button><span class="merged-status">${me(g.status)}</span><h4>${me(g.title)}</h4><p>${me(g.description||'No description added yet.')}</p><div class="badge-row"><span class="badge">${me(g.category)}</span><span class="badge">${g.sourceType==='folder'?'Uploaded Folder':'Saved Record'}</span>${g.productIndex!==''?'<span class="badge">Linked Product</span>':''}</div><div class="mini-actions"><button class="merged-link" onclick="mergedOpenGenerator('${g.id}')">Open</button><button class="merged-link" onclick="mergedEditGenerator('${g.id}')">Edit</button><button class="merged-link" onclick="mergedDeleteGenerator('${g.id}')">Delete</button></div></div>`).join('');
+}
+function generatorModal(g=null){mModal(g?'Edit Generator':'Add Generator',`<div class="form-grid"><div class="field"><label>Generator Name</label><input id="mmGenTitle" value="${me(g?.title||'')}"></div><div class="field"><label>Category</label><select id="mmGenCat"><option>General</option><option>Image Generator</option><option>Prompt Generator</option><option>Video Generator</option><option>UGC Generator</option><option>Mockup Generator</option><option>Stationery Generator</option><option>Business Generator</option><option>Content Generator</option></select></div><div class="field full"><label>Description</label><textarea id="mmGenDesc">${me(g?.description||'')}</textarea></div><div class="field"><label>Generator Link</label><input id="mmGenLink" type="url" value="${me(g?.link||'')}"></div><div class="field"><label>Local File Reference</label><input id="mmGenFile" value="${me(g?.file||'')}"></div><div class="field"><label>Status</label><select id="mmGenStatus"><option>Draft</option><option>Active</option><option>Testing</option><option>Archived</option></select></div><div class="field"><label>Connected Product</label><select id="mmGenProduct">${productOpts()}</select></div><div class="field"><label>Connected Project</label><select id="mmGenProject">${projectOpts()}</select></div></div><button class="btn primary" id="mmGenSave" style="margin-top:14px">Save Generator</button>`);if(g){mq('#mmGenCat').value=g.category||'General';mq('#mmGenStatus').value=g.status||'Draft';mq('#mmGenProduct').value=g.productIndex??'';mq('#mmGenProject').value=g.projectId||''}mq('#mmGenSave').onclick=()=>{const o={id:g?.id||mid(),title:mq('#mmGenTitle').value.trim(),category:mq('#mmGenCat').value,description:mq('#mmGenDesc').value.trim(),link:mq('#mmGenLink').value.trim(),file:mq('#mmGenFile').value.trim(),status:mq('#mmGenStatus').value,productIndex:mq('#mmGenProduct').value,projectId:mq('#mmGenProject').value,favorite:g?.favorite||false,sourceType:g?.sourceType||'manual',folderId:g?.folderId||'',folderSignature:g?.folderSignature||'',created:g?.created||new Date().toISOString(),updated:new Date().toISOString()};if(!o.title)return mToast('Add a generator name first.');if(g)Object.assign(g,o);else mstate.generators.unshift(o);mSave();mq('#mergedModal').classList.add('hidden');mToast('Generator saved.')}}
+mq('#mergedAddGenerator').onclick=()=>generatorModal();
+mq('#mergedUploadFolder').onclick=()=>mq('#mergedFolderInput').click();
+mq('#mergedFolderInput').onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const first=files[0].webkitRelativePath||files[0].name,folder=first.split('/')[0];const signature=files.map(f=>`${(f.webkitRelativePath||f.name).toLowerCase()}|${f.size}`).sort().join('||');if(mstate.generators.some(g=>g.sourceType==='folder'&&g.folderSignature===signature)){mToast(`"${folder}" is already in your vault.`);e.target.value='';return}const index=files.find(f=>{const p=(f.webkitRelativePath||f.name).toLowerCase();return p.endsWith('/index.html')||p==='index.html'});const folderId=mid();try{await mPutFolder({id:folderId,name:folder,signature,files:files.map(f=>({name:f.name,path:f.webkitRelativePath||f.name,type:f.type,size:f.size,file:f}))});mstate.generators.unshift({id:mid(),title:folder,category:'Uploaded Folder',description:`${files.length} files stored in your Generator Vault.`,link:'',file:index?(index.webkitRelativePath||index.name):'',status:'Testing',favorite:false,sourceType:'folder',folderId,folderSignature:signature,productIndex:'',projectId:'',created:new Date().toISOString(),updated:new Date().toISOString()});mSave();mToast(`${folder} uploaded — ${files.length} files${index?' — index.html found':''}.`)}catch(err){console.error(err);mToast('The generator folder could not be saved.')}e.target.value=''};
+mq('#mergedGeneratorSearch').oninput=renderGenerators;mq('#mergedGeneratorFilter').onchange=renderGenerators;mq('#mergedGeneratorCategory').onchange=renderGenerators;
+window.mergedToggleGenFav=id=>{const g=mstate.generators.find(x=>x.id===id);if(g){g.favorite=!g.favorite;mSave()}};
+window.mergedEditGenerator=id=>generatorModal(mstate.generators.find(x=>x.id===id));
+window.mergedDeleteGenerator=async id=>{const g=mstate.generators.find(x=>x.id===id);if(!g||!confirm('Delete this generator?'))return;if(g.folderId)try{await mDeleteFolder(g.folderId)}catch(e){}mstate.generators=mstate.generators.filter(x=>x.id!==id);mSave()};
+function norm(p){return String(p||'').replace(/\\/g,'/').replace(/^\.\//,'')}
+async function previewFolder(rec){const root=rec.name||'',map=new Map();(rec.files||[]).forEach(e=>{let p=norm(e.path||e.name);if(root&&p.startsWith(root+'/'))p=p.slice(root.length+1);map.set(p,e)});const index=map.get('index.html')||[...map.entries()].find(([p])=>p.toLowerCase().endsWith('/index.html'))?.[1];if(!index?.file)return mToast('No index.html was found in this uploaded folder.');const urls=new Map(),created=[];const make=b=>{const u=URL.createObjectURL(b);created.push(u);return u};for(const [p,e] of map){if(!e.file)continue;const ext=(p.split('.').pop()||'').toLowerCase();if(!['html','htm','css','js','mjs'].includes(ext))urls.set(p,make(e.file))}for(const [p,e] of map){if(!e.file||!p.toLowerCase().endsWith('.css'))continue;let t=await e.file.text();t=t.replace(/url\((['"]?)([^)'"?]+)\1\)/g,(all,q,u)=>{if(/^data:|^https?:|^#/.test(u))return all;const base=p.includes('/')?p.slice(0,p.lastIndexOf('/')+1):'',target=norm(base+u);return urls.has(target)?`url(${q}${urls.get(target)}${q})`:all});urls.set(p,make(new Blob([t],{type:'text/css'})))}for(const [p,e] of map){if(!e.file||!(/\.(js|mjs)$/i.test(p)))continue;urls.set(p,make(new Blob([await e.file.text()],{type:'text/javascript'})))}let h=await index.file.text();h=h.replace(/(src|href)=(['"])([^'"]+)\2/g,(all,a,q,u)=>{if(/^https?:|^data:|^#|^mailto:|^javascript:/.test(u))return all;const target=norm(u);return urls.has(target)?`${a}=${q}${urls.get(target)}${q}`:all});const url=make(new Blob([h],{type:'text/html'}));window.open(url,'_blank');setTimeout(()=>created.forEach(URL.revokeObjectURL),120000)}
+window.mergedOpenGenerator=async id=>{const g=mstate.generators.find(x=>x.id===id);if(!g)return;if(g.folderId){const rec=await mGetFolder(g.folderId);if(!rec)return mToast('That uploaded folder is not available in this browser.');return previewFolder(rec)}if(g.link)return window.open(g.link,'_blank','noopener,noreferrer');mModal(g.title,`<p>${me(g.description||'No description added.')}</p><div class="badge-row"><span class="badge">${me(g.category)}</span><span class="badge">${me(g.status)}</span></div>${g.file?`<div class="output" style="margin-top:14px;min-height:80px">Local reference: ${me(g.file)}</div>`:''}`)};
+// Idea Brain
+function renderIdeas(){const box=mq('#mergedIdeaMessages');box.innerHTML=mstate.ideas.length?mstate.ideas.map(m=>`<div class="idea-msg ${m.role}">${me(m.body)}</div>`).join(''):'<div class="empty">What are you thinking about? Drop a product, generator, campaign, or business idea here.</div>';box.scrollTop=box.scrollHeight;const latest=[...mstate.ideas].reverse().find(x=>x.role==='user')?.body||'';mq('#mergedIdeaLatest').textContent=latest||'Develop an idea first.'}
+mq('#mergedDevelopIdea').onclick=()=>{const text=mq('#mergedIdeaInput').value.trim();if(!text)return;mstate.ideas.push({id:mid(),role:'user',body:text,created:new Date().toISOString()});mstate.ideas.push({id:mid(),role:'assistant',body:`I see the direction. Let’s build around “${text}.”\n\nStart with the purpose: what should it help the user create, solve, or accomplish?\n\nThen define:\n• who it is for\n• the inputs or categories it needs\n• the outputs it should create\n• what should be saved or reused\n• what makes it different from a basic version\n• how it connects to a product, generator, or campaign\n\nWhen the direction feels right, use the conversion buttons to move it into the next workspace.`,created:new Date().toISOString()});mq('#mergedIdeaInput').value='';mSave()};
+mq('#mergedClearIdeas').onclick=()=>{mstate.ideas=[];mSave()};function latestIdea(){return [...mstate.ideas].reverse().find(x=>x.role==='user')?.body||''}
+mq('#mergedIdeaProduct').onclick=()=>{const idea=latestIdea();if(!idea)return mToast('Develop an idea first.');if(typeof go==='function'){go('builder');mq('#productName').value=idea.slice(0,100);mq('#productSummary').value=idea;mToast('Idea moved into Product Builder.')}};
+mq('#mergedIdeaProject').onclick=()=>{const idea=latestIdea();if(!idea)return mToast('Develop an idea first.');mstate.projects.unshift({id:mid(),title:idea.slice(0,100),type:'Other',status:'Planning',notes:idea,created:new Date().toISOString()});mSave();if(typeof go==='function')go('workspaceStudio')};
+mq('#mergedIdeaGenerator').onclick=()=>{const idea=latestIdea();if(!idea)return mToast('Develop an idea first.');generatorModal({id:mid(),title:idea.slice(0,100),category:'Prompt Generator',description:idea,link:'',file:'',status:'Draft',favorite:false,sourceType:'manual',folderId:'',folderSignature:'',productIndex:'',projectId:'',created:new Date().toISOString()})};
+// Workspace tabs
+mqa('#mergedWorkspaceTabs [data-merged-tab]').forEach(b=>b.onclick=()=>{mqa('#mergedWorkspaceTabs button').forEach(x=>x.classList.toggle('active',x===b));mqa('.merged-pane').forEach(x=>x.classList.remove('active'));const key=b.dataset.mergedTab;mq('#mergedPane'+key.charAt(0).toUpperCase()+key.slice(1)).classList.add('active')});
+function projectModal(p=null){mModal(p?'Edit Business Project':'New Business Project',`<div class="form-grid"><div class="field"><label>Project Title</label><input id="mmProjectTitle" value="${me(p?.title||'')}"></div><div class="field"><label>Type</label><select id="mmProjectType"><option>Product</option><option>Generator</option><option>Workshop</option><option>Campaign</option><option>Website</option><option>Content</option><option>Other</option></select></div><div class="field"><label>Status</label><select id="mmProjectStatus"><option>Planning</option><option>In Progress</option><option>Testing</option><option>Ready</option><option>Live</option><option>Archived</option></select></div><div class="field full"><label>Notes</label><textarea id="mmProjectNotes">${me(p?.notes||'')}</textarea></div></div><button class="btn primary" id="mmProjectSave" style="margin-top:14px">Save Project</button>`);if(p){mq('#mmProjectType').value=p.type;mq('#mmProjectStatus').value=p.status}mq('#mmProjectSave').onclick=()=>{const o={id:p?.id||mid(),title:mq('#mmProjectTitle').value.trim(),type:mq('#mmProjectType').value,status:mq('#mmProjectStatus').value,notes:mq('#mmProjectNotes').value.trim(),created:p?.created||new Date().toISOString(),updated:new Date().toISOString()};if(!o.title)return mToast('Add a project title.');if(p)Object.assign(p,o);else mstate.projects.unshift(o);mSave();mq('#mergedModal').classList.add('hidden')}}
+mq('#mergedAddProject').onclick=()=>projectModal();function renderProjects(){mq('#mergedProjectEmpty').style.display=mstate.projects.length?'none':'block';mq('#mergedProjectGrid').innerHTML=mstate.projects.map(p=>`<div class="card merged-card"><span class="merged-status">${me(p.status)}</span><h4>${me(p.title)}</h4><p>${me(p.notes||'No notes yet.')}</p><div class="badge-row"><span class="badge">${me(p.type)}</span></div><div class="mini-actions"><button class="merged-link" onclick="mergedEditProject('${p.id}')">Edit</button><button class="merged-link" onclick="mergedDeleteProject('${p.id}')">Delete</button></div></div>`).join('')}
+window.mergedEditProject=id=>projectModal(mstate.projects.find(x=>x.id===id));window.mergedDeleteProject=id=>{if(confirm('Delete this project?')){mstate.projects=mstate.projects.filter(x=>x.id!==id);mSave()}};
+// Prompt Studio
+mq('#mergedBuildPrompt').onclick=()=>{const parts=[],title=mq('#mergedPromptTitle').value.trim(),format=mq('#mergedPromptFormat').value,goal=mq('#mergedPromptGoal').value.trim(),aud=mq('#mergedPromptAudience').value.trim(),subject=mq('#mergedPromptSubject').value.trim(),style=mq('#mergedPromptStyle').value.trim(),inc=mq('#mergedPromptInclude').value.trim(),avoid=mq('#mergedPromptAvoid').value.trim();if(title)parts.push(`PROMPT TITLE:\n${title}`);parts.push(`OUTPUT TYPE:\n${format}`);if(goal)parts.push(`GOAL:\n${goal}`);if(aud)parts.push(`AUDIENCE:\n${aud}`);if(subject)parts.push(`MAIN SUBJECT:\n${subject}`);parts.push(`STYLE / CREATIVE DIRECTION:\n${style||data?.brand?.style||'Bright luxury editorial, Caribbean sapphire blue, metallic silver, polished composition.'}`);if(inc)parts.push(`MUST INCLUDE:\n${inc}`);parts.push(`AVOID:\n${avoid||'Crowns, tiaras, HUD overlays, fake dashboards, random charts, paint brush strokes, clutter, unrelated floating icons.'}`);parts.push('FINAL INSTRUCTIONS:\nCreate a polished, complete result that follows every requirement above. Keep all important wording correctly spelled, fully visible, unobstructed, and easy to read. Do not invent unrelated details or remove requested elements. Maintain a clean, intentional, professional composition and strong visual hierarchy.');mergedPrompt=parts.join('\n\n');mq('#mergedPromptOutput').textContent=mergedPrompt};
+mq('#mergedSavePrompt').onclick=()=>{if(!mergedPrompt)return mToast('Build a prompt first.');mstate.prompts.unshift({id:mid(),title:mq('#mergedPromptTitle').value.trim()||'Untitled Prompt',body:mergedPrompt,created:new Date().toISOString()});mSave();mToast('Prompt saved in Workspace Studio.')};
+// Generic collections
+const collectionNames={favorites:['Favorite Styles','Style'],storyboards:['Storyboards','Storyboard'],ugc:['UGC Content','UGC Item'],stationery:['Stationery','Stationery Item']};
+mqa('[data-add-collection]').forEach(b=>b.onclick=()=>collectionModal(b.dataset.addCollection));function collectionModal(key){const [title,singular]=collectionNames[key];mModal(`Add ${singular}`,`<div class="field"><label>Title</label><input id="mmColTitle"></div><div class="field" style="margin-top:12px"><label>Notes / Content</label><textarea id="mmColBody"></textarea></div><button class="btn primary" id="mmColSave" style="margin-top:14px">Save ${singular}</button>`);mq('#mmColSave').onclick=()=>{const titleText=mq('#mmColTitle').value.trim();if(!titleText)return mToast('Add a title first.');mstate[key].unshift({id:mid(),title:titleText,body:mq('#mmColBody').value.trim(),created:new Date().toISOString()});mSave();mq('#mergedModal').classList.add('hidden')}}
+function renderCollection(key,selector){const items=mstate[key]||[];mq(selector).innerHTML=items.length?items.map(i=>`<div class="collection-item"><h4>${me(i.title)}</h4><pre>${me(i.body||'')}</pre><button class="merged-link" onclick="mergedDeleteCollection('${key}','${i.id}')">Delete</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1">Nothing saved here yet.</div>'}
+window.mergedDeleteCollection=(key,id)=>{mstate[key]=mstate[key].filter(x=>x.id!==id);mSave()};
+function mRenderAll(){renderGenerators();renderIdeas();renderProjects();renderCollection('favorites','#mergedFavoritesGrid');renderCollection('storyboards','#mergedStoryboardsGrid');renderCollection('ugc','#mergedUgcGrid');renderCollection('stationery','#mergedStationeryGrid')}
+mRenderAll();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+const SUPABASE_URL='https://zaylygsgbqtulnilcvrg.supabase.co';
+const SUPABASE_KEY='sb_publishable_9OrEqYDv9NV8E29JakoepA_rIgYDsMk';
+const CLOUD_SLOT='businessCreativeHubV2';
+let client=null,currentUser=null,cloudSettings={},syncTimer=null,authMode='login';
+window.GLAM_SCOPED_KEY=(base)=>currentUser?`${base}::${currentUser.id}`:`${base}::signedout`;
+window.GLAM_SCOPED_DB=(base)=>currentUser?`${base}_${currentUser.id}`:`${base}_signedout`;
+function q(s){return document.querySelector(s)}
+function setStatus(msg){const el=q('#authStatus');if(el)el.textContent=msg||''}
+function showAuth(){q('#authView')?.classList.remove('hidden');q('#appView')?.classList.add('auth-hidden')}
+function showApp(){q('#authView')?.classList.add('hidden');q('#appView')?.classList.remove('auth-hidden')}
+function setSync(ok,text){['#syncDot','#accountSyncDot'].forEach(sel=>q(sel)?.classList.toggle('off',!ok));if(q('#accountSyncText'))q('#accountSyncText').textContent=text|| (ok?'Cloud workspace connected.':'Cloud workspace not connected.');}
+function emptyBusiness(){return {brand:defaultBrand(),products:[]}}
+function emptyMerged(){return {generators:[],projects:[],ideas:[],prompts:[],favorites:[],storyboards:[],ugc:[],stationery:[]}}
+function localLegacy(){let b=null,m=null;try{b=JSON.parse(localStorage.getItem('glamAgencyOS_v1')||'null')}catch(e){}try{m=JSON.parse(localStorage.getItem('glam_merged_workspace_v1')||'null')}catch(e){}return {b,m};}
+async function loadCloud(){if(!client||!currentUser)return;setSync(false,'Loading your private workspace...');const {data:pref,error}=await client.from('user_preferences').select('settings').eq('user_id',currentUser.id).maybeSingle();if(error)throw error;cloudSettings=(pref&&pref.settings&&typeof pref.settings==='object')?pref.settings:{};let slot=cloudSettings[CLOUD_SLOT];if(!slot){const legacy=localLegacy();slot=(legacy.b||legacy.m)?{businessData:legacy.b||emptyBusiness(),mergedData:legacy.m||emptyMerged(),migratedFromLegacy:true}:{businessData:emptyBusiness(),mergedData:emptyMerged()};cloudSettings={...cloudSettings,[CLOUD_SLOT]:slot};const {error:upErr}=await client.from('user_preferences').upsert({user_id:currentUser.id,settings:cloudSettings},{onConflict:'user_id'});if(upErr)throw upErr;}localStorage.setItem(window.GLAM_SCOPED_KEY('glamAgencyOS_v1'),JSON.stringify(slot.businessData||emptyBusiness()));localStorage.setItem(window.GLAM_SCOPED_KEY('glam_merged_workspace_v1'),JSON.stringify(slot.mergedData||emptyMerged()));data=loadData();if(window.GLAM_RELOAD_MERGED)window.GLAM_RELOAD_MERGED();renderAll();setSync(true,'Your private cloud workspace is connected.');}
+window.GLAM_SYNC_WORKSPACE=function(){if(!client||!currentUser)return;clearTimeout(syncTimer);syncTimer=setTimeout(async()=>{try{const merged=window.GLAM_GET_MERGED?window.GLAM_GET_MERGED():emptyMerged();cloudSettings={...cloudSettings,[CLOUD_SLOT]:{businessData:data,mergedData:merged,updatedAt:new Date().toISOString()}};const {error}=await client.from('user_preferences').upsert({user_id:currentUser.id,settings:cloudSettings},{onConflict:'user_id'});if(error)throw error;setSync(true,'Saved to your private cloud workspace.')}catch(err){console.error(err);setSync(false,'Could not sync to the cloud. Your browser copy is still saved.')}},450);};
+function applyBrand(){const b=data&&data.brand?data.brand:defaultBrand();document.documentElement.style.setProperty('--sapphire',b.primaryColor||'#168FEA');document.documentElement.style.setProperty('--deep',b.secondaryColor||'#103B63');if(q('#workspaceBrandName'))q('#workspaceBrandName').textContent=b.name||'MY BUSINESS HUB';if(q('#workspaceBrandTag'))q('#workspaceBrandTag').textContent=b.catchphrase||'Your private products, generators, creative assets, and marketing workspace.';const render=(sel,val,empty)=>{const el=q(sel);if(!el)return;el.innerHTML=val?`<img src="${val}" alt="Private brand asset">`:`<span class="subtle-note">${empty}</span>`};render('#dashboardBrandPreview',b.kitData,'Add your private brand kit in Brand Intelligence.');render('#brandKitPreview',b.kitData,'Upload your brand kit or brand board for this account.');render('#brandLogoPreview',b.logoData,'Your logo will appear here.');render('#brandKitMiniPreview',b.kitData,'Your brand kit will appear here.');render('#accountLogoPreview',b.logoData,'No logo uploaded yet.');render('#accountKitPreview',b.kitData,'No brand kit uploaded yet.');}
+window.GLAM_AFTER_RENDER=applyBrand;
+async function imageToData(file,max=1400){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.86))};img.onerror=reject;img.src=r.result};r.onerror=reject;r.readAsDataURL(file)})}
+async function handleBrandUpload(file,key){if(!file)return;try{const value=await imageToData(file);if(!data.brand)data.brand=defaultBrand();data.brand[key]=value;saveData();applyBrand();toast('Brand asset saved to your private workspace.')}catch(e){toast('That image could not be saved.')}}
+function bindBrandUploads(){['brandLogoUpload','accountLogoUpload'].forEach(id=>{const el=q('#'+id);if(el&&!el.dataset.bound){el.dataset.bound='1';el.addEventListener('change',e=>handleBrandUpload(e.target.files[0],'logoData'))}});['brandKitUpload','accountKitUpload'].forEach(id=>{const el=q('#'+id);if(el&&!el.dataset.bound){el.dataset.bound='1';el.addEventListener('change',e=>handleBrandUpload(e.target.files[0],'kitData'))}})}
+async function loadProfile(){if(!client||!currentUser)return;const {data:p}=await client.from('profiles').select('preferred_name,email').eq('id',currentUser.id).maybeSingle();if(q('#accountEmail'))q('#accountEmail').value=currentUser.email||p?.email||'';if(q('#accountPreferredName'))q('#accountPreferredName').value=p?.preferred_name||'';if(q('#topbarUserEmail'))q('#topbarUserEmail').textContent=currentUser.email||'Signed in';}
+async function enter(session){currentUser=session.user;localStorage.setItem('glam_active_user',currentUser.id);await loadCloud();await loadProfile();showApp();bindBrandUploads();applyBrand();if(!(data.brand&&data.brand.name))go('brand');}
+async function init(){if(!window.supabase){setStatus('Supabase library could not load.');return}client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);bindAuth();client.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){showAuth();q('#recoveryBox')?.classList.remove('hidden');setStatus('Choose a new password.');return}if(session&&event==='SIGNED_IN'){setTimeout(()=>enter(session).catch(e=>{console.error(e);setStatus(e.message)}),0)}if(event==='SIGNED_OUT'){currentUser=null;showAuth();}});const remember=localStorage.getItem('glam_remember_me');const {data:sess}=await client.auth.getSession();if(sess.session&&remember!=='false')await enter(sess.session);else{if(sess.session&&remember==='false')await client.auth.signOut();showAuth();}}
+function bindAuth(){q('#loginTab').onclick=()=>setMode('login');q('#signupTab').onclick=()=>setMode('signup');document.querySelectorAll('[data-toggle-password]').forEach(btn=>btn.onclick=()=>{const el=q('#'+btn.dataset.togglePassword);const show=el.type==='password';el.type=show?'text':'password';btn.textContent=show?'Hide':'Show'});q('#authForm').onsubmit=async e=>{e.preventDefault();const email=q('#authEmail').value.trim(),password=q('#authPassword').value;localStorage.setItem('glam_remember_me',q('#rememberMe').checked?'true':'false');setStatus('Working...');try{if(authMode==='signup'){const redirect=location.protocol==='file:'?undefined:location.origin+location.pathname;const {data:r,error}=await client.auth.signUp({email,password,options:redirect?{emailRedirectTo:redirect}:{}});if(error)throw error;if(r.session)await enter(r.session);else setStatus('Account created. Check your email to verify it.')}else{const {data:r,error}=await client.auth.signInWithPassword({email,password});if(error)throw error;await enter(r.session)}}catch(err){setStatus(err.message||'Unable to complete that action.')}};q('#forgotPasswordBtn').onclick=async()=>{const email=q('#authEmail').value.trim();if(!email)return setStatus('Enter your email first.');try{const redirect=location.protocol==='file:'?undefined:location.origin+location.pathname;const {error}=await client.auth.resetPasswordForEmail(email,redirect?{redirectTo:redirect}:{});if(error)throw error;setStatus('Password reset email sent.')}catch(err){setStatus(err.message)}};q('#saveNewPasswordBtn').onclick=async()=>{const a=q('#newPassword').value,b=q('#confirmNewPassword').value;if(a.length<8)return setStatus('Use at least 8 characters.');if(a!==b)return setStatus('The passwords do not match.');const {error}=await client.auth.updateUser({password:a});if(error)return setStatus(error.message);q('#recoveryBox').classList.add('hidden');setStatus('Password changed. You can continue to the hub.');const {data:s}=await client.auth.getSession();if(s.session)await enter(s.session)};q('#logoutTopBtn').onclick=()=>client.auth.signOut();q('#logoutAccountBtn').onclick=()=>client.auth.signOut();q('#saveAccountProfileBtn').onclick=async()=>{if(!currentUser)return;const preferred_name=q('#accountPreferredName').value.trim();const {error}=await client.from('profiles').update({preferred_name,updated_at:new Date().toISOString()}).eq('id',currentUser.id);if(error)toast(error.message);else toast('Profile saved.')};q('#changePasswordBtn').onclick=()=>{showAuth();q('#recoveryBox').classList.remove('hidden');setStatus('Enter a new password below.');};q('#syncNowBtn').onclick=()=>{window.GLAM_SYNC_WORKSPACE();toast('Sync requested.')};q('#exportAccountBackupBtn').onclick=exportWorkspace;q('#importAccountBackupBtn').onclick=()=>q('#accountBackupFile').click();q('#accountBackupFile').onchange=importWorkspace;const exp=q('#exportBtn');if(exp)exp.onclick=exportWorkspace;const imp=q('#importBtn');if(imp)imp.onclick=()=>q('#accountBackupFile').click();}
+function setMode(mode){authMode=mode;q('#loginTab').classList.toggle('active',mode==='login');q('#signupTab').classList.toggle('active',mode==='signup');q('#authSubmit').textContent=mode==='login'?'Log In':'Create Account';q('#authPassword').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');setStatus('')}
+function exportWorkspace(){const payload={version:2,workspaceType:'multi-user-business-creative-hub',businessData:data,mergedData:window.GLAM_GET_MERGED?window.GLAM_GET_MERGED():emptyMerged(),exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-business-creative-hub-backup.json';a.click();URL.revokeObjectURL(a.href);}
+function importWorkspace(e){const file=e.target.files?.[0];if(!file)return;const r=new FileReader();r.onload=async()=>{try{const p=JSON.parse(r.result);const b=p.businessData||p.data||p;const m=p.mergedData||p.mstate||emptyMerged();localStorage.setItem(window.GLAM_SCOPED_KEY('glamAgencyOS_v1'),JSON.stringify(b));localStorage.setItem(window.GLAM_SCOPED_KEY('glam_merged_workspace_v1'),JSON.stringify(m));data=loadData();if(window.GLAM_SET_MERGED)window.GLAM_SET_MERGED(m);renderAll();window.GLAM_SYNC_WORKSPACE();toast('Workspace imported into this account.')}catch(err){alert('That workspace backup could not be imported.')}};r.readAsText(file);e.target.value=''}
+window.addEventListener('DOMContentLoaded',()=>{bindBrandUploads();init().catch(e=>{console.error(e);setStatus(e.message||'Unable to start authentication.')})});
+})();
+</script>
+</body>
+</html>
