@@ -147,7 +147,7 @@ js = r'''<script>
   });
 })();
 </script>'''
-s, n2 = script_pat.subn(js, s, count=1)
+s, n2 = script_pat.subn(lambda m: js, s, count=1)
 print('script replacements', n2)
 
 p.write_text(s, encoding='utf-8')

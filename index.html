@@ -179,6 +179,8 @@ img{max-width:100%; display:block}
 
 .easy-product-helper{margin:16px 0 8px;padding:18px;border-radius:20px;border:1px solid rgba(22,143,234,.22);background:linear-gradient(135deg,rgba(22,143,234,.10),rgba(255,255,255,.98));box-shadow:var(--shadow2)}
 .easy-product-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.easy-product-head b{display:block;color:var(--deep);font-size:16px}.easy-product-head span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.easy-note{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.8);color:#617689;font-size:11px;font-weight:700}
+
+.product-intelligence-details{margin-top:18px;border:1px solid rgba(22,143,234,.18);border-radius:18px;background:rgba(255,255,255,.74);overflow:hidden}.product-intelligence-details summary{cursor:pointer;padding:15px 16px;color:var(--deep);font-weight:900;list-style:none}.product-intelligence-details summary::-webkit-details-marker{display:none}.product-intelligence-details summary span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:700}.product-intelligence-inner{padding:0 16px 16px}.product-brain-done{background:linear-gradient(135deg,rgba(47,181,119,.10),rgba(255,255,255,.96));border-color:rgba(47,181,119,.28)!important}
 </style>
 </head>
 <body>
@@ -370,15 +372,14 @@ img{max-width:100%; display:block}
         <h3>Product Builder</h3>
         <div id="easyProductHelper" class="easy-product-helper">
           <div class="easy-product-head">
-            <div><b>✨ Beginner Easy-Fill</b><span>Choose a few simple answers. The hub fills most of the confusing boxes for you.</span></div>
-            <button type="button" class="btn primary" id="easyFillProductBtn">Fill 90% For Me</button>
+            <div><b>✨ Product Brain — tell it the basics, not the strategy</b><span>Describe the product like you would explain it to a friend. The hub figures out the audience, problem, benefits, transformation, sales angles, keywords, SEO, CTA, pricing position, and the rest.</span></div>
+            <button type="button" class="btn primary" id="easyFillProductBtn">Build My Product For Me</button>
           </div>
-          <div class="form-grid thirds" style="margin-top:14px">
-            <div class="field"><label>Who is this mainly for?</label><select id="easyAudience"><option>Beginners</option><option>Women 40+</option><option>Digital creators</option><option>Small business owners</option><option>Entrepreneurs</option><option>Coaches / educators</option><option>Content creators</option><option>Everyone</option></select></div>
-            <div class="field"><label>What should it help them do?</label><select id="easyGoal"><option>Create faster</option><option>Learn something step by step</option><option>Save time</option><option>Make better visuals</option><option>Launch a product</option><option>Market a business</option><option>Sell digital products</option><option>Get organized</option><option>Generate ideas</option><option>Automate repetitive work</option></select></div>
-            <div class="field"><label>What best describes the value?</label><select id="easyValue"><option>Simple and beginner-friendly</option><option>Fast and time-saving</option><option>Done-for-you guidance</option><option>Professional and polished</option><option>Creative and customizable</option><option>Practical and easy to follow</option><option>All-in-one resource</option></select></div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field full"><label>What is this product? Just say it normally.</label><textarea id="productPlainDescription" placeholder="Example: It is a prompt generator that turns one affirmation word into image, video, music and marketing prompts."></textarea></div>
+            <div class="field full"><label>What is included? Add only what you already know. Optional.</label><textarea id="productPlainIncludes" placeholder="Example: bonus prompts, how-to-use guide, how-to-sell guide. Leave blank if you are not sure yet."></textarea></div>
           </div>
-          <div class="easy-note">You still choose the product name, price, links, and anything you want to customize. Everything else can be generated as a strong starting point.</div>
+          <div id="productBrainResult" class="easy-note">You do not need to know marketing terms. Add the product name, category and price if you know them, describe the product above, then click <b>Build My Product For Me</b>.</div>
         </div>
         <p>This form captures the foundation you actually need for product creation, listing, visuals, and marketing. You can come back and edit it anytime.</p>
         <input type="hidden" id="productId" />
@@ -395,6 +396,9 @@ img{max-width:100%; display:block}
           <div class="field"><label>Launch Date</label><input id="productLaunchDate" type="date"></div>
         </div>
 
+        <details id="productIntelligenceDetails" class="product-intelligence-details">
+          <summary>Hub-Generated Product Intelligence <span>Review or edit only if you want to</span></summary>
+          <div class="product-intelligence-inner">
         <div class="section-title"><h3>The Offer</h3><span>What it is and why people care</span></div>
         <div class="form-grid">
           <div class="field full"><label>What It Is</label><textarea id="productSummary"></textarea></div>
@@ -428,6 +432,9 @@ img{max-width:100%; display:block}
           <div class="field full"><label>Keywords / Hashtags</label><textarea id="productKeywords"></textarea></div>
           <div class="field full"><label>SEO Terms</label><textarea id="productSEO"></textarea></div>
         </div>
+
+          </div>
+        </details>
 
         <div class="actions" style="margin-top:16px">
           <button class="btn primary" id="saveProductBtn">Save Product</button>
