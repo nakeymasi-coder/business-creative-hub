@@ -1,0 +1,40 @@
+name: Fix Product Builder Button
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, '[skip button-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make Product Brain button bind immediately
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('function buildProductBrain(){','window.buildProductBrain=function buildProductBrain(){',1)
+          old="""  window.addEventListener('DOMContentLoaded',()=>{\n    byId('easyFillProductBtn')?.addEventListener('click',buildProductBrain);\n  });"""
+          new="""  const bindProductBrainButton=()=>{\n    const btn=byId('easyFillProductBtn');\n    if(btn && !btn.dataset.brainBound){\n      btn.dataset.brainBound='1';\n      btn.addEventListener('click',(e)=>{ e.preventDefault(); window.buildProductBrain(); });\n    }\n  };\n  if(document.readyState==='loading'){\n    document.addEventListener('DOMContentLoaded',bindProductBrainButton,{once:true});\n  }else{\n    bindProductBrainButton();\n  }\n  setTimeout(bindProductBrainButton,0);"""
+          if old not in s:
+              raise SystemExit('Product Brain listener block not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit button fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Fix Product Brain button binding [skip button-fix] [skip brain-fix] [skip product-brain] [skip easy-builder]"
+            git push
+          fi
