@@ -1,0 +1,119 @@
+name: Direct Product Brain Fix
+on:
+  push:
+    paths:
+      - '.github/workflows/direct-product-brain-fix.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch Product Brain directly
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='<!-- DIRECT_PRODUCT_BRAIN_FIX -->'
+          if marker in s:
+              print('Direct Product Brain fix already present')
+              raise SystemExit(0)
+          script=r'''
+<!-- DIRECT_PRODUCT_BRAIN_FIX -->
+<script>
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  function value(id){ return (byId(id)?.value || '').trim(); }
+  function setVal(id,val,onlyBlank=false){
+    const el=byId(id); if(!el) return;
+    if(!onlyBlank || !String(el.value||'').trim()) el.value=val;
+  }
+  const defaults={
+    'Prompt Pack':{noun:'prompt pack',format:'PDF prompt pack / digital prompt collection',delivery:'Instant digital download',rights:'Commercial creation use',price:'$17',regular:'$27',sale:'$12',cta:'Get the prompts',includes:'Ready-to-use prompts, quick-start instructions, customization guidance, and examples'},
+    'Digital Guide / Ebook':{noun:'digital guide',format:'PDF guide / ebook',delivery:'Instant PDF download',rights:'Personal use',price:'$27',regular:'$37',sale:'$17',cta:'Get the guide',includes:'Step-by-step guidance, examples, action steps, and quick-reference tips'},
+    'Workshop / Class':{noun:'workshop',format:'Live or recorded online workshop',delivery:'Online class access',rights:'Personal learning use',price:'$97',regular:'$147',sale:'$77',cta:'Reserve your spot',includes:'Guided training, demonstrations, practical examples, action steps, and supporting resources'},
+    'Generator / Tool':{noun:'generator',format:'Interactive generator / web app',delivery:'Online tool access',rights:'Commercial creation use',price:'$27',regular:'$47',sale:'$17',cta:'Get access',includes:'Interactive generator, guided options, reusable outputs, and beginner-friendly instructions'},
+    'Template Pack':{noun:'template pack',format:'Editable digital template pack',delivery:'Instant digital download',rights:'Commercial creation use',price:'$27',regular:'$47',sale:'$17',cta:'Get the templates',includes:'Editable templates, usage instructions, and customization guidance'},
+    'Printable':{noun:'printable',format:'Printable PDF',delivery:'Instant PDF download',rights:'Personal use',price:'$9',regular:'$17',sale:'$7',cta:'Get the printable',includes:'Print-ready pages, instructions, and reusable worksheets'},
+    'Membership / Community':{noun:'membership',format:'Online membership / community',delivery:'Private community access',rights:'Member use',price:'$47/month',regular:'$67/month',sale:'$37/month',cta:'Join now',includes:'Community access, ongoing resources, support, updates, and member content'},
+    'Bundle':{noun:'digital bundle',format:'Digital resource bundle',delivery:'Instant digital download / access',rights:'Commercial creation use',price:'$47',regular:'$67',sale:'$37',cta:'Get the bundle',includes:'Multiple coordinated resources, guides, templates, prompts, or tools in one bundle'},
+    'Other Digital Product':{noun:'digital product',format:'Digital product',delivery:'Instant digital delivery',rights:'Personal or commercial use as stated',price:'$27',regular:'$37',sale:'$17',cta:'Get instant access',includes:'Core digital resource, instructions, and supporting materials'}
+  };
+  function inferGoal(text,cat){
+    const t=String(text||'').toLowerCase();
+    if(/image|graphic|visual|photo|art|design|thumbnail/.test(t)) return 'create polished visual content faster';
+    if(/video|reel|tiktok|youtube|short.form/.test(t)) return 'create video content faster and with clearer direction';
+    if(/market|promotion|social|content|caption|launch|sell|sales/.test(t)) return 'market and sell their offers with less guesswork';
+    if(/website|site|landing|page/.test(t)) return 'build and improve their online presence more easily';
+    if(/prompt|generator|ai/.test(t)) return 'turn ideas into usable AI-ready outputs faster';
+    if(/organize|planner|checklist|workflow|system/.test(t)) return 'get organized with a repeatable system';
+    if(/learn|teach|class|workshop|guide|tutorial/.test(t)) return 'learn the process step by step and put it into action';
+    if(cat==='Membership / Community') return 'get ongoing support, resources, and momentum';
+    return 'get a useful result faster with a clearer, simpler process';
+  }
+  function inferAudience(text,cat){
+    const t=String(text||'').toLowerCase();
+    if(/teacher|educator/.test(t)) return 'teachers and educators who want a simpler way to create and use digital resources';
+    if(/coach|coaching/.test(t)) return 'coaches and service providers who want practical, ready-to-use business resources';
+    if(/creator|content|social/.test(t)) return 'digital creators and small business owners who want to create and market content faster';
+    if(/beginner|easy|simple|step.by.step/.test(t)) return 'beginners who want clear guidance without technical overwhelm';
+    if(cat==='Workshop / Class') return 'beginners and growing business owners who want guided, hands-on help';
+    return (window.data?.brand?.audience || 'beginners, creators, and small business owners who want practical help without unnecessary overwhelm');
+  }
+  function title(v){ return String(v||'').replace(/\b\w/g,m=>m.toUpperCase()); }
+  function buildProductBrain(){
+    const name=value('productName');
+    const cat=value('productCategory') || 'Other Digital Product';
+    const desc=value('productPlainDescription');
+    const included=value('productPlainIncludes');
+    if(!name){ if(typeof toast==='function') toast('Add the product name first.'); byId('productName')?.focus(); return; }
+    if(!desc){ if(typeof toast==='function') toast('Tell the hub what the product is in your own words.'); byId('productPlainDescription')?.focus(); return; }
+    const d=defaults[cat] || defaults['Other Digital Product'];
+    const source=`${name} ${desc} ${included}`;
+    const goal=inferGoal(source,cat);
+    const audience=inferAudience(source,cat);
+    const clean=desc.replace(/\s+/g,' ').replace(/[.]$/,'');
+    setVal('productInternalName',name,true);
+    setVal('productFormat',d.format);
+    setVal('productPrice',d.price,true); setVal('productRegularPrice',d.regular,true); setVal('productSalePrice',d.sale,true);
+    setVal('productSummary',`${name} is a ${d.noun} that ${clean.charAt(0).toLowerCase()+clean.slice(1)}. It is designed to help ${audience} ${goal}.`);
+    setVal('productProblem','The customer wants the result, but the process can feel confusing, time-consuming, or hard to organize. They may not know what to create, what steps matter most, or how to turn an idea into a finished result.');
+    setVal('productTransformation',`Go from unsure, scattered, or starting from scratch to having a clear resource that helps them ${goal}.`);
+    setVal('productPrimaryBenefit',title(goal));
+    setVal('productSecondaryBenefits','Saves time, reduces guesswork, gives clear direction, creates a repeatable process, and makes the next step easier');
+    setVal('productIncludes',included || d.includes);
+    setVal('productBonuses','Suggested bonus: quick-start guide, example output, and a simple what-to-do-next checklist');
+    setVal('productRights',d.rights); setVal('productDelivery',d.delivery);
+    setVal('productAudience',audience); setVal('productSkill','Beginner-friendly / no advanced experience required');
+    setVal('productPainPoints','Not knowing where to start; spending too much time figuring things out; feeling overwhelmed by too many steps; inconsistent results; needing a clearer shortcut or repeatable process');
+    setVal('productDesiredResult',`${title(goal)} with more confidence, less guesswork, and a practical process they can use again.`);
+    setVal('productBuyReasons','It gives them a faster starting point; simplifies a confusing process; saves time; feels practical instead of overwhelming; provides reusable value; helps them move from idea to action.');
+    setVal('productHesitations','They may wonder whether it is easy enough for them, whether they need special tools or experience, what exactly is included, and whether the product will save them enough time to be worth buying.');
+    setVal('productCTA',d.cta); setVal('productPrimaryAngle',`${title(goal)} — without starting from scratch`);
+    setVal('productSecondaryAngles','Save time and skip the guesswork; beginner-friendly guidance; turn an idea into action faster; reusable value; clear next steps instead of overwhelm');
+    setVal('productKeywords',[name,cat,'beginner friendly',goal,'digital product','easy to use','time saving'].join(', '));
+    setVal('productSEO',`${name}; ${cat}; ${goal}; beginner-friendly ${d.noun}; digital resource for ${audience}`);
+    const result=byId('productBrainResult');
+    if(result){ result.classList.add('product-brain-done'); result.innerHTML=`<b>Done.</b> The hub built the strategy for <b>${name}</b>. You can save it now, or open Hub-Generated Product Intelligence only if you want to review it.`; }
+    if(typeof toast==='function') toast('Product Brain finished the strategy for you.');
+  }
+  window.buildProductBrain=buildProductBrain;
+  function bind(){ const btn=byId('easyFillProductBtn'); if(btn){ btn.onclick=buildProductBrain; btn.dataset.productBrainBound='1'; } }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
+})();
+</script>
+'''
+          s=s.replace('</body>',script+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit fix
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Fix Build My Product For Me button directly'
+          git push
