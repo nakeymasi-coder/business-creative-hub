@@ -1,0 +1,50 @@
+name: Enable AI Idea Brain
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-ai-idea-brain.yml'
+      - 'idea-brain-ai.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wire AI Idea Brain into hub
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          expose="client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);"
+          replacement="client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);window.GLAM_SUPABASE_CLIENT=client;"
+          if 'window.GLAM_SUPABASE_CLIENT=client;' not in s:
+              if expose not in s:
+                  raise SystemExit('Supabase client creation line not found')
+              s=s.replace(expose,replacement,1)
+
+          tag='<script src="./idea-brain-ai.js"></script>'
+          if tag not in s:
+              if '</body>' not in s:
+                  raise SystemExit('Closing body tag not found')
+              s=s.replace('</body>',tag+'\n</body>',1)
+
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit AI Idea Brain wiring
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "AI Idea Brain already wired"
+          else
+            git commit -m "Enable AI-powered Idea Brain [skip product-brain] [skip easy-builder]"
+            git push
+          fi
