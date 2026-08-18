@@ -1,4 +1,5 @@
 name: Direct Product Brain Fix
+# retriggered 2026-08-17
 on:
   push:
     paths:
