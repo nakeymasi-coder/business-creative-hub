@@ -3,6 +3,7 @@ name: Fix Product Brain
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,18 +14,163 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fix and run Product Brain script
+      - name: Replace broken escaped Product Brain block
         run: |
-          sed -i 's/script_pat.subn(js, s, count=1)/script_pat.subn(lambda m: js, s, count=1)/' scripts/upgrade_product_brain.py
-          python scripts/upgrade_product_brain.py
-      - name: Commit changes
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          # Remove the previously injected Product Brain block that was written
+          # as literal backslash-n text instead of executable HTML/JavaScript.
+          start_token = r'\n<script>\n(function(){\n  const byId=(id)=>document.getElementById(id);'
+          start = s.find(start_token)
+          if start != -1:
+              end_token = r'\n</script>\n'
+              end = s.find(end_token, start)
+              if end != -1:
+                  end += len(end_token)
+                  s = s[:start] + s[end:]
+
+          marker = '<!-- PRODUCT_BRAIN_WORKING_V2 -->'
+          if marker not in s:
+              script = r'''
+<!-- PRODUCT_BRAIN_WORKING_V2 -->
+<script>
+(function(){
+  const byId = id => document.getElementById(id);
+  const get = id => (byId(id)?.value || '').trim();
+  const set = (id, value, onlyIfBlank=false) => {
+    const el = byId(id);
+    if (!el) return;
+    if (!onlyIfBlank || !String(el.value || '').trim()) el.value = value;
+  };
+
+  const defaults = {
+    'Prompt Pack': { noun:'prompt pack', format:'PDF prompt pack / digital prompt collection', delivery:'Instant digital download', rights:'Commercial creation use', price:'$17', regular:'$27', sale:'$12', cta:'Get the prompts', includes:'Ready-to-use prompts, quick-start instructions, customization guidance, and examples' },
+    'Digital Guide / Ebook': { noun:'digital guide', format:'PDF guide / ebook', delivery:'Instant PDF download', rights:'Personal use', price:'$27', regular:'$37', sale:'$17', cta:'Get the guide', includes:'Step-by-step guidance, examples, action steps, and quick-reference tips' },
+    'Workshop / Class': { noun:'workshop', format:'Live or recorded online workshop', delivery:'Online class access', rights:'Personal learning use', price:'$97', regular:'$147', sale:'$77', cta:'Reserve your spot', includes:'Guided training, demonstrations, practical examples, action steps, and supporting resources' },
+    'Generator / Tool': { noun:'generator', format:'Interactive generator / web app', delivery:'Online tool access', rights:'Commercial creation use', price:'$27', regular:'$47', sale:'$17', cta:'Get access', includes:'Interactive generator, guided options, reusable outputs, and beginner-friendly instructions' },
+    'Template Pack': { noun:'template pack', format:'Editable digital template pack', delivery:'Instant digital download', rights:'Commercial creation use', price:'$27', regular:'$47', sale:'$17', cta:'Get the templates', includes:'Editable templates, usage instructions, and customization guidance' },
+    'Printable': { noun:'printable', format:'Printable PDF', delivery:'Instant PDF download', rights:'Personal use', price:'$9', regular:'$17', sale:'$7', cta:'Get the printable', includes:'Print-ready pages, instructions, and reusable worksheets' },
+    'Membership / Community': { noun:'membership', format:'Online membership / community', delivery:'Private community access', rights:'Member use', price:'$47/month', regular:'$67/month', sale:'$37/month', cta:'Join now', includes:'Community access, ongoing resources, support, updates, and member content' },
+    'Bundle': { noun:'digital bundle', format:'Digital resource bundle', delivery:'Instant digital download / access', rights:'Commercial creation use', price:'$47', regular:'$67', sale:'$37', cta:'Get the bundle', includes:'Multiple coordinated resources, guides, templates, prompts, or tools in one bundle' },
+    'Other Digital Product': { noun:'digital product', format:'Digital product', delivery:'Instant digital delivery', rights:'Personal or commercial use as stated', price:'$27', regular:'$37', sale:'$17', cta:'Get instant access', includes:'Core digital resource, instructions, and supporting materials' }
+  };
+
+  function inferGoal(text, cat){
+    const t = String(text || '').toLowerCase();
+    if (/image|graphic|visual|photo|art|design|thumbnail/.test(t)) return 'create polished visual content faster';
+    if (/video|reel|tiktok|youtube|short.form/.test(t)) return 'create video content faster and with clearer direction';
+    if (/market|promotion|social|content|caption|launch|sell|sales/.test(t)) return 'market and sell their offers with less guesswork';
+    if (/website|site|landing|page/.test(t)) return 'build and improve their online presence more easily';
+    if (/prompt|generator|ai/.test(t)) return 'turn ideas into usable AI-ready outputs faster';
+    if (/organize|planner|checklist|workflow|system/.test(t)) return 'get organized with a repeatable system';
+    if (/learn|teach|class|workshop|guide|tutorial/.test(t)) return 'learn the process step by step and put it into action';
+    if (cat === 'Membership / Community') return 'get ongoing support, resources, and momentum';
+    return 'get a useful result faster with a clearer, simpler process';
+  }
+
+  function inferAudience(text, cat){
+    const t = String(text || '').toLowerCase();
+    if (/teacher|educator/.test(t)) return 'teachers and educators who want a simpler way to create and use digital resources';
+    if (/coach|coaching/.test(t)) return 'coaches and service providers who want practical, ready-to-use business resources';
+    if (/creator|content|social/.test(t)) return 'digital creators and small business owners who want to create and market content faster';
+    if (/beginner|easy|simple|step.by.step/.test(t)) return 'beginners who want clear guidance without technical overwhelm';
+    if (cat === 'Workshop / Class') return 'beginners and growing business owners who want guided, hands-on help';
+    return (window.data?.brand?.audience || 'beginners, creators, and small business owners who want practical help without unnecessary overwhelm');
+  }
+
+  function titleCase(v){ return String(v || '').replace(/\b\w/g, m => m.toUpperCase()); }
+
+  function buildProductBrain(){
+    const name = get('productName');
+    const cat = get('productCategory') || 'Other Digital Product';
+    const desc = get('productPlainDescription');
+    const included = get('productPlainIncludes');
+
+    if (!name){
+      if (typeof toast === 'function') toast('Add the product name first.');
+      byId('productName')?.focus();
+      return;
+    }
+    if (!desc){
+      if (typeof toast === 'function') toast('Tell the hub what the product is in your own words.');
+      byId('productPlainDescription')?.focus();
+      return;
+    }
+
+    const d = defaults[cat] || defaults['Other Digital Product'];
+    const source = `${name} ${desc} ${included}`;
+    const goal = inferGoal(source, cat);
+    const audience = inferAudience(source, cat);
+    const clean = desc.replace(/\s+/g, ' ').replace(/[.]$/, '');
+
+    set('productInternalName', name, true);
+    set('productFormat', d.format);
+    set('productPrice', d.price, true);
+    set('productRegularPrice', d.regular, true);
+    set('productSalePrice', d.sale, true);
+    set('productSummary', `${name} is a ${d.noun} that ${clean.charAt(0).toLowerCase() + clean.slice(1)}. It is designed to help ${audience} ${goal}.`);
+    set('productProblem', 'The customer wants the result, but the process can feel confusing, time-consuming, or hard to organize. They may not know what to create, what steps matter most, or how to turn an idea into a finished result.');
+    set('productTransformation', `Go from unsure, scattered, or starting from scratch to having a clear resource that helps them ${goal}.`);
+    set('productPrimaryBenefit', titleCase(goal));
+    set('productSecondaryBenefits', 'Saves time, reduces guesswork, gives clear direction, creates a repeatable process, and makes the next step easier');
+    set('productIncludes', included || d.includes);
+    set('productBonuses', 'Suggested bonus: quick-start guide, example output, and a simple what-to-do-next checklist');
+    set('productRights', d.rights);
+    set('productDelivery', d.delivery);
+    set('productAudience', audience);
+    set('productSkill', 'Beginner-friendly / no advanced experience required');
+    set('productPainPoints', 'Not knowing where to start; spending too much time figuring things out; feeling overwhelmed by too many steps; inconsistent results; needing a clearer shortcut or repeatable process');
+    set('productDesiredResult', `${titleCase(goal)} with more confidence, less guesswork, and a practical process they can use again.`);
+    set('productBuyReasons', 'It gives them a faster starting point; simplifies a confusing process; saves time; feels practical instead of overwhelming; provides reusable value; helps them move from idea to action.');
+    set('productHesitations', 'They may wonder whether it is easy enough for them, whether they need special tools or experience, what exactly is included, and whether the product will save them enough time to be worth buying.');
+    set('productCTA', d.cta);
+    set('productPrimaryAngle', `${titleCase(goal)} — without starting from scratch`);
+    set('productSecondaryAngles', 'Save time and skip the guesswork; beginner-friendly guidance; turn an idea into action faster; reusable value; clear next steps instead of overwhelm');
+    set('productKeywords', [name, cat, 'beginner friendly', goal, 'digital product', 'easy to use', 'time saving'].join(', '));
+    set('productSEO', `${name}; ${cat}; ${goal}; beginner-friendly ${d.noun}; digital resource for ${audience}`);
+
+    const result = byId('productBrainResult');
+    if (result){
+      result.classList.add('product-brain-done');
+      result.innerHTML = `<b>Done.</b> The hub built the strategy for <b>${name}</b>. Save it now, or open Hub-Generated Product Intelligence only if you want to review it.`;
+    }
+    if (typeof toast === 'function') toast('Product Brain finished the strategy for you.');
+  }
+
+  window.buildProductBrain = buildProductBrain;
+
+  function bind(){
+    const btn = byId('easyFillProductBtn');
+    if (!btn) return;
+    btn.onclick = function(e){
+      e.preventDefault();
+      buildProductBrain();
+    };
+    btn.dataset.productBrainBound = '1';
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+  else bind();
+})();
+</script>
+'''
+              s = s.replace('</body>', script + '\n</body>', 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit repaired hub
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/upgrade_product_brain.py index.html
+          git add index.html
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Finish automatic Product Brain upgrade [skip brain-fix] [skip product-brain] [skip easy-builder]"
+            git commit -m "Repair Product Brain button [skip brain-fix] [skip button-fix] [skip product-brain] [skip easy-builder]"
             git push
           fi
